@@ -13,7 +13,7 @@
 </head>
 <body>
   <div id="navbar" class="topnav">
-    <a href="#" id="logo"><img class="logo" src="https://github.com/techsyndicate.png"></a>
+    <a href="{% url 'index' %}" id="logo"><img class="logo" src="https://github.com/techsyndicate.png"></a>
     {% if current_user.is_authenticated %}
     <a href="#">Log out</a>
     {% else %}
@@ -21,6 +21,13 @@
     <a href="#">Leaderboard</a>
     <a href="javascript:void(0);" class="icon" onclick="responsive()"><i class="fa fa-bars"></i></a>
   </div>
+  {% if messages %}
+  {% for message in messages %}
+    <div class="container">
+      <p>{{ message }}</p>
+    </div>
+  {% endfor %}
+  {% endif %}
   <div class="container">
     <h1>{% block header %}{% endblock %}</h1>
     {% block content %} {% endblock %}
