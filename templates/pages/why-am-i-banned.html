@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block header %}
+{% endblock %}
+{% block content %}
+<h2>You are banned for suspicious activity. Please try logging after some time.</h2>
+<a href="{% url 'index' %}"><button class="button-primary" type="button">Home Page</button></a><a href="{% url 'logout' %}"><br><br><button class="button-primary" type="button">Logout</button></a>
+{% endblock %}

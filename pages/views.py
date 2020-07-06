@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from .models import Player
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -42,6 +43,8 @@ def register(request):
             else:
                 user = User.objects.create_user(username=username, password=password, email=email,
                 first_name=first_name, last_name=last_name)
+                player = Player(user=user, banned=False, score=0, current_level=0)
+                player.save()
                 user.save()
                 messages.success(request, 'You are now registered and can log in')
                 return redirect('login')
@@ -51,8 +54,13 @@ def register(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    return render(request, 'pages/dashboard.html')
-
+    current_user = User.objects.get(id=request.user.id)
+    
+    if current_user.player.banned == True:
+        return render(request, 'pages/why-am-i-banned.html')
+    else:
+        return render(request, 'pages/dashboard.html')
+    
 @login_required(login_url='login')
 def logout(request):
     if request.method == "POST":
