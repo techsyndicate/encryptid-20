@@ -61,10 +61,9 @@ def dashboard(request):
     else:
         return render(request, 'pages/dashboard.html')
     
-@login_required(login_url='login')
+
 def logout(request):
-    if request.method == "POST":
-        auth.logout(request)
-        messages.success(request, 'You are now logged out')
+    auth.logout(request)
+    messages.success(request, 'You are now logged out')
     
     return redirect('index')

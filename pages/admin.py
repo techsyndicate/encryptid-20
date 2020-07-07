@@ -1,6 +1,9 @@
 from django.contrib import admin
 
 from .models import Player
+from django.contrib.auth.models import Group
+
+
 
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('user', 'banned', 'score','current_level')
@@ -11,3 +14,4 @@ class PlayerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Player, PlayerAdmin)
+admin.site.unregister(Group)
