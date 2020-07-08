@@ -1,6 +1,70 @@
-{% extends 'base.html' %}
-{% block header %}
-{% endblock %}
-{% block content %}
-<h2>You're at a login secured page</h2>
-{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Encryptid 2020</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="shortcut icon" href="https://github.com/techsyndicate.png"/>
+  <link rel="stylesheet" href="{% static 'css/skeleton.css' %}"/>
+  <link rel="stylesheet" href="{% static 'css/normalize.css' %}"/>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" media="all" href="{% static 'css/jquery-jvectormap.css' %}"/>
+  <script src="{% static 'js/jquery-1.8.2.js' %}"></script>
+  <script src="{% static 'js/jquery-jvectormap.js' %}"></script>
+  <script src="{% static 'js/jquery-mousewheel.js' %}"></script>
+  <script src="{% static 'js/jvectormap.js' %}"></script>
+  <script src="{% static 'js/abstract-element.js' %}"></script>
+  <script src="{% static 'js/abstract-canvas-element.js' %}"></script>
+  <script src="{% static 'js/abstract-shape-element.js' %}"></script>
+  <script src="{% static 'js/svg-element.js' %}"></script>
+  <script src="{% static 'js/svg-group-element.js' %}"></script>
+  <script src="{% static 'js/svg-canvas-element.js' %}"></script>
+  <script src="{% static 'js/svg-shape-element.js' %}"></script>
+  <script src="{% static 'js/svg-path-element.js' %}"></script>
+  <script src="{% static 'js/svg-circle-element.js' %}"></script>
+  <script src="{% static 'js/svg-image-element.js' %}"></script>
+  <script src="{% static 'js/svg-text-element.js' %}"></script>
+  <script src="{% static 'js/map-object.js' %}"></script>
+  <script src="{% static 'js/region.js' %}"></script>
+  <script src="{% static 'js/vector-canvas.js' %}"></script>
+  <script src="{% static 'js/simple-scale.js' %}"></script>
+  <script src="{% static 'js/ordinal-scale.js' %}"></script>
+  <script src="{% static 'js/numeric-scale.js' %}"></script>
+  <script src="{% static 'js/color-scale.js' %}"></script>
+  <script src="{% static 'js/legend.js' %}"></script>
+  <script src="{% static 'js/data-series.js' %}"></script>
+  <script src="{% static 'js/proj.js' %}"></script>
+  <script src="{% static 'js/map.js' %}"></script>
+  <script src="{% static 'js/jquery-jvectormap-world-mill-en.js' %}"></script>
+  <script src="{% static 'js/index.js' %}"></script> 
+</head>
+<body>
+  <div id="navbar" class="topnav">
+    <a href="{% url 'index' %}" id="logo"><img class="logo" src="https://github.com/techsyndicate.png"></a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'logout' %}">Logout</a>
+    {% else %}
+      <a href="{% url 'login' %}">Login</a>
+      <a href="{% url 'register' %}">Register</a>
+    {% endif %}
+    <a href="#">Leaderboard</a>
+    <a href="javascript:void(0);" class="icon" onclick="responsive()"><i class="fa fa-bars"></i></a>
+  </div>
+  {% if messages %}
+  {% for message in messages %}
+    <div class="container">
+      <p>{{ message }}</p>
+    </div>
+  {% endfor %}
+  {% endif %}
+  <div class="container">
+    <h1>{% block header %}{% endblock %}</h1>
+    <div  id="map1" style="margin-left:0rem;width: 1200px; height: 800px;"></div>
+    <footer>
+      <hr><p>Tech Syndicate</p><hr>
+    </footer>
+  </div>
+</body>
+</html>
