@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -100,6 +103,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
+RECAPTCHA_SITE_KEY = os.environ.get('RECAPTCHA_SITE_KEY')
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

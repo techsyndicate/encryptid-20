@@ -1,4 +1,7 @@
+import requests
+from dotenv import load_dotenv
 from django.shortcuts import render, redirect
+from django.conf import settings
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -40,33 +43,46 @@ def register(request):
                 messages.error(request, 'That email is being used')
                 return redirect('register')
             else:
-                user = User.objects.create_user(username=username, password=password, email=email,
-                first_name=first_name, last_name=last_name)
-                user.save()
+                recaptcha_response = request.POST.get('g-recaptcha-response')
+                data = {
+                    'secret': settings.RECAPTCHA_SECRET_KEY,
+                    'response': recaptcha_response
+                }
+                r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+                result = r.json()
 
-                db.collection(u'users').document(username).set({
-                u'uid': username,
-                u'name':first_name,
-                u'current_level': 0,
-                u'last_answer_time':0,
-                u'user_points': 0,
-                u'superuser': False,
-                u'banned': False,
-                u'email': email,
-                })
+                if result['success']:
+                    user = User.objects.create_user(username=username, password=password, email=email,
+                    first_name=first_name, last_name=last_name)
+                    user.save()
 
-                messages.success(request, 'You are now registered and can log in')
-                return redirect('login')
+                    db.collection(u'users').document(username).set({
+                        u'uid': username,
+                        u'name':first_name,
+                        u'current_level': 0,
+                        u'last_answer_time':0,
+                        u'user_points': 0,
+                        u'superuser': False,
+                        u'banned': False,
+                        u'email': email,
+                    })
+
+                    messages.success(request, 'You are now registered and can log in')
+                    return redirect('login')
+                else:
+                    messages.error(request, "Invalid reCAPTCHA. Please try again.")
+                    return redirect('register')
 
     else:
-        return render(request, 'pages/register.html')
+        context = { 'site_key': settings.RECAPTCHA_SITE_KEY }
+        return render(request, 'pages/register.html', context)
 
 @login_required(login_url='login')
 def dashboard(request):
     current_user = User.objects.get(id=request.user.id)
     username = current_user.username
     user = db.collection(u'users').document(username).get().to_dict()
-    if user['banned'] == True:
+    if user['banned']:
         return render(request, 'pages/why-am-i-banned.html')
     else:
         return render(request, 'pages/dashboard.html')
