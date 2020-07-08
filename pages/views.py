@@ -63,7 +63,13 @@ def register(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    return render(request, 'pages/dashboard.html')
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user = db.collection(u'users').document(username).get().to_dict()
+    if user['banned'] == True:
+        return render(request, 'pages/why-am-i-banned.html')
+    else:
+        return render(request, 'pages/dashboard.html')
     
 
 def logout(request):
