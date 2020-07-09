@@ -94,3 +94,7 @@ def logout(request):
     
     return redirect('index')
 
+def level_call(request, code):
+    print(code)
+    return redirect('dashboard')
+
