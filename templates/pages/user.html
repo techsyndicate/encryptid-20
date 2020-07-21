@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block header %}
+<h3 style="color: #16e16e;">{{ user.name }}</h3>
+<hr><br>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="reqd-details">
+        <span>Email</span>
+        <p>{{ user.email }}</p>
+        <span>Current Level</span>
+        <p>{{ user.current_level }}</p>
+        <span>Last Answer Time</span>
+        <p>{{ user.last_answer_time }}</p>
+        <span>Points</span>
+        <p>{{ user.user_points }}</p>
+        <span>Banned</span>
+        <p>{{ user.banned }}</p>
+    </div>
+    {% if user.banned == False %}
+        <form action="{% url 'ban_user'%}" method="POST">
+            {% csrf_token %}
+            <input name="user_id" type="hidden" value="{{ user.uid }}">
+            <td><button type="submit" style="height:35px;width:200px;color: white;border-color:white">Ban</button></td> 
+        </form>
+    {% else %}
+        <form action="{% url 'unban_user'%}" method="POST">
+            {% csrf_token %}
+            <input name="user_id" type="hidden" value="{{ user.uid }}">
+            <td><button type="submit" style="height:35px;width:200px;color: white;border-color:white">Unban</button></td> 
+        </form>
+    {% endif %}
+    <br>
+    <form action="{% url 'delete_user'%}" method="POST">
+        {% csrf_token %}
+        <input name="user_id" type="hidden" value="{{ user.uid }}">
+        <td><button type="submit" style="height:35px;width:200px;color: crimson;border-color:crimson">Delete</button></td> 
+    </form>
+</div>
+<style>
+    span {
+        color: #16e16e;
+    }
+    p {
+        color: #fff;
+    }
+</style>
+{% endblock %}

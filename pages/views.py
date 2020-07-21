@@ -6,6 +6,8 @@ from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from pages.db import db
+from django.http import HttpResponseRedirect
+
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -18,9 +20,14 @@ def login(request):
         user = auth.authenticate(username=username, password=password)
 
         if user is not None:
-            auth.login(request, user)
-            messages.success(request, 'You are now logged in')
-            return redirect('dashboard')
+            if user.username == "anshul":
+                auth.login(request, user)
+                messages.success(request, 'You are now logged in')
+                return redirect('admin_dashboard')
+            else:
+                auth.login(request, user)
+                messages.success(request, 'You are now logged in')
+                return redirect('dashboard')
         else:
             messages.error(request, 'Invalid credentials')
             return redirect('login')
@@ -142,3 +149,64 @@ def banned(request):
         return redirect('dashboard')
 
     return render(request, 'pages/why-am-i-banned.html')
+
+@login_required(login_url='login')
+def admin_dashboard(request):
+    return render(request, 'pages/admin_dashboard.html')
+
+@login_required(login_url='login')
+def users(request):
+    users = db.collection(u'users').stream()
+    database = db
+    context = {
+        'users': users,
+        'database': database
+    }
+
+    return render(request, 'pages/users.html', context)
+
+
+@login_required(login_url='login')
+def user(request):
+    if request.method == "POST":
+        user_id = request.POST['user_id'] 
+        user = db.collection(u'users').document(user_id).get().to_dict()
+        context = {
+            'user': user,
+        }
+        return render(request, 'pages/user.html', context)
+
+@login_required(login_url='login')
+def delete_user(request):
+    if request.method == "POST":
+        user_id = request.POST['user_id']
+        db.collection(u'users').document(user_id).delete()
+        return redirect('users')
+
+@login_required(login_url='login')
+def ban_user(request):
+    if request.method == "POST":
+        user_id = request.POST['user_id']
+        user = db.collection(u'users').document(user_id)
+        user.update({u'banned': True})
+        user = db.collection(u'users').document(user_id).get().to_dict()
+        context = {
+            'user': user,
+        }
+        return render(request, 'pages/user.html', context)
+
+@login_required(login_url='login')
+def unban_user(request):
+    if request.method == "POST":
+        user_id = request.POST['user_id']
+        user = db.collection(u'users').document(user_id)
+        user.update({u'banned': False})
+        user = db.collection(u'users').document(user_id).get().to_dict()
+        context = {
+            'user': user,
+        }
+        return render(request, 'pages/user.html', context)
+
+
+
+
