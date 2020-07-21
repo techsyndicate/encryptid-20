@@ -6,7 +6,8 @@ urlpatterns = [
     path('', views.index, name="index"),
     path('login', views.login, name="login"),
     path('register', views.register, name="register"),
-    path('play', views.dashboard, name="dashboard"),
+    path('dashboard', views.dashboard, name="dashboard"),
     path('logout', views.logout, name="logout"),
-    path('country/<str:code>/',views.level_call,name="level_call"),
+    path('play/<str:code>', views.play, name="play"),
+    path('why-am-i-banned', views.banned, name="banned")
 ]
