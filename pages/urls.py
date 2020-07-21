@@ -1,4 +1,3 @@
-  
 from django.urls import path
 from . import views
 
@@ -9,6 +8,7 @@ urlpatterns = [
     path('dashboard', views.dashboard, name="dashboard"),
     path('logout', views.logout, name="logout"),
     path('play/<str:code>', views.play, name="play"),
+    path('play/<str:code>/submit', views.submit, name="submit"),
     path('why-am-i-banned', views.banned, name="banned"),
     path('admin_dashboard', views.admin_dashboard, name="admin_dashboard"),
     path('admin_dashboard/users',views.users,name="users"),

@@ -3,8 +3,8 @@
   <h4>Level for {{ id }} | {{ points }} Points</h4>
   <div class="question">{{ question }}</div>
   <br />
-  <form method="POST">
-      {% csrf_token %}
+  <form method="POST" action="{% url 'submit' id %}">
+    {% csrf_token %}
     <input type="text" name="answer" placeholder="Your answer" /><br /><br />
     <button class="button-primary" type="submit">Submit</button>
   </form>
