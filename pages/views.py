@@ -119,16 +119,17 @@ def play(request, code):
     if user['banned']:
         return redirect('banned')
     else:
-        if code != user['current_level']:
-            code = user['current_level']
-            return redirect('play', code=code)
-        else:
+        if code == user['current_level'] or len(user['current_level']) == 0:
             user_doc.update({u'current_level': code})
             level = db.collection(u'levels').document(code).get().to_dict()
             question = level['question']
             points = level['points']
             src_hint = level['src_hint']
             answer = level['answer']
+        else:
+            code = user['current_level']
+            messages.error(request, "You must complete your level first.")
+            return redirect('play', code=code)
         
         context = {
             'id': code,

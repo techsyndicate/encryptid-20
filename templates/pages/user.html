@@ -14,6 +14,8 @@
         <p>{{ user.last_answer_time }}</p>
         <span>Points</span>
         <p>{{ user.user_points }}</p>
+        <span>Completed Levels</span>
+        <p>{{ user.completed_levels }}</p>
         <span>Banned</span>
         <p>{{ user.banned }}</p>
     </div>
@@ -35,7 +37,7 @@
         {% csrf_token %}
         <input name="user_id" type="hidden" value="{{ user.uid }}">
         <td><button type="submit" style="height:35px;width:200px;color: crimson;border-color:crimson">Delete</button></td> 
-    </form>
+    </form><br><br>
 </div>
 <style>
     span {
