@@ -1,4 +1,4 @@
-import requests
+import requests, time
 from dotenv import load_dotenv
 from django.shortcuts import render, redirect
 from django.conf import settings
@@ -100,7 +100,8 @@ def dashboard(request):
     else:
         context = {
             'username': username,
-            'completed_levels': completed_levels
+            'completed_levels': completed_levels,
+            'lolthis': 'red'
         }
         return render(request, 'pages/dashboard.html', context)
 
@@ -120,7 +121,10 @@ def play(request, code):
     if user['banned']:
         return redirect('banned')
     else:
-        if code == user['current_level'] or len(user['current_level']) == 0:
+        if code in user['completed_levels']:
+            messages.success(request, "You've already completed this level.")
+            return redirect('dashboard')
+        elif code == user['current_level'] or len(user['current_level']) == 0:
             user_doc.update({u'current_level': code})
             level = db.collection(u'levels').document(code).get().to_dict()
             question = level['question']
@@ -131,12 +135,12 @@ def play(request, code):
             code = user['current_level']
             messages.error(request, "You must complete your level first.")
             return redirect('play', code=code)
-        
+    
         context = {
             'id': code,
             'question': question,
             'points': points,
-            'hint': src_hint
+            'hint': src_hint,
         }
 
         return render(request, 'pages/level.html', context)
@@ -159,7 +163,7 @@ def admin_dashboard(request):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
-    if user['superuser'] == True:
+    if user['superuser']:
         return render(request, 'pages/admin_dashboard.html')
     else:
         return redirect('dashboard')
@@ -171,7 +175,7 @@ def users(request):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
-    if user['superuser'] == True:
+    if user['superuser']:
         users = db.collection(u'users').stream()
         database = db
         context = {
@@ -191,7 +195,7 @@ def user(request):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
-    if user['superuser'] == True:
+    if user['superuser']:
         if request.method == "POST":
             user_id = request.POST['user_id'] 
             user = db.collection(u'users').document(user_id).get().to_dict()
@@ -201,7 +205,6 @@ def user(request):
             return render(request, 'pages/user.html', context)
     else:
         return redirect('dashboard')
-    
 
 @login_required(login_url='login')
 def delete_user(request):
@@ -234,6 +237,41 @@ def unban_user(request):
         }
         return render(request, 'pages/user.html', context)
 
+@login_required(login_url='login')
+def submit(request, code):
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
 
+    if request.method == "POST":
+        answer = request.POST['answer']
+        answer = ''.join(answer.split()).lower()
 
+        current_level = user['current_level']
+        level = db.collection(u'levels').document(current_level).get().to_dict()
+        level_points = level['points']
+        completed_levels = user['completed_levels']
+        user_points = user['user_points']
+
+        if answer == level['answer']:
+            completed_levels.append(current_level)
+            user_doc.update({
+                u'current_level': '',
+                u'last_answer_time': time.time(),
+                u'completed_levels': completed_levels,
+                u'user_points': user_points + level_points
+            })
+            messages.success(request, "Correct answer, good work there.")
+            return redirect('dashboard')
+        else:
+            logs = db.collection(u'logs')
+            logs.add({
+                u'username': username,
+                u'level': current_level,
+                u'content': answer,
+                u'timestamp': time.time()
+            })
+            messages.error(request, "lmfao ye kya likh rha hai bhai hasi aa gayi thodi sorry")
+            return redirect('play', code=current_level)
 

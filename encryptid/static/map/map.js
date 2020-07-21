@@ -41,18 +41,18 @@ $('#map').vectorMap({
         "stroke-opacity": 3,
       }
     },
-    /*series: {
+    series: {
       regions: [{
         values: {
             // make it light green once 
             // the user completes that level
+            US: '{{ lolthis }}',
             CH:'red',
-            US:'red',
             GB:'red',
             KW:'red',
             UK:'red',
             JO:'red',
         }
       }]
-    }*/
+    }
 });
