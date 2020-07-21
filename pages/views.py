@@ -20,7 +20,8 @@ def login(request):
         user = auth.authenticate(username=username, password=password)
 
         if user is not None:
-            if user.username == "anshul":
+            current_user = db.collection(u'users').document(username).get().to_dict()
+            if current_user['superuser'] == True:
                 auth.login(request, user)
                 messages.success(request, 'You are now logged in')
                 return redirect('admin_dashboard')
@@ -153,29 +154,54 @@ def banned(request):
 
 @login_required(login_url='login')
 def admin_dashboard(request):
-    return render(request, 'pages/admin_dashboard.html')
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
+
+    if user['superuser'] == True:
+        return render(request, 'pages/admin_dashboard.html')
+    else:
+        return redirect('dashboard')
 
 @login_required(login_url='login')
 def users(request):
-    users = db.collection(u'users').stream()
-    database = db
-    context = {
-        'users': users,
-        'database': database
-    }
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
 
-    return render(request, 'pages/users.html', context)
+    if user['superuser'] == True:
+        users = db.collection(u'users').stream()
+        database = db
+        context = {
+            'users': users,
+            'database': database
+        }
+
+        return render(request, 'pages/users.html', context)
+    else:
+        return redirect('dashboard')
 
 
 @login_required(login_url='login')
 def user(request):
-    if request.method == "POST":
-        user_id = request.POST['user_id'] 
-        user = db.collection(u'users').document(user_id).get().to_dict()
-        context = {
-            'user': user,
-        }
-        return render(request, 'pages/user.html', context)
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
+
+    if user['superuser'] == True:
+        if request.method == "POST":
+            user_id = request.POST['user_id'] 
+            user = db.collection(u'users').document(user_id).get().to_dict()
+            context = {
+                'user': user,
+            }
+            return render(request, 'pages/user.html', context)
+    else:
+        return redirect('dashboard')
+    
 
 @login_required(login_url='login')
 def delete_user(request):
