@@ -235,5 +235,68 @@ def unban_user(request):
         return render(request, 'pages/user.html', context)
 
 
+@login_required(login_url='login')
+def levels(request):
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
 
+    if user['superuser'] == True:
+        levels = db.collection(u'levels').stream()
+        database = db
+        context = {
+            'levels': levels,
+            'database': database
+        }
 
+        return render(request, 'pages/admin_levels.html', context)
+    else:
+        return redirect('dashboard')
+
+@login_required(login_url='login')
+def level(request):
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
+
+    if user['superuser'] == True:
+        if request.method == "POST":
+            level_id = request.POST['level_id'] 
+            level = db.collection(u'levels').document(level_id).get().to_dict()
+            context = {
+                'level': level,
+                'level_id':level_id,
+            }
+            return render(request, 'pages/admin_level.html', context)
+    else:
+        return redirect('dashboard')
+
+@login_required(login_url='login')
+def delete_level(request):
+    if request.method == "POST":
+        level_id = request.POST['level_id']
+        db.collection(u'levels').document(level_id).delete()
+        return redirect('levels')
+
+@login_required(login_url='login')
+def add_level(request):
+    if request.method == "POST":
+        level_id = request.POST['level_id']
+        question = request.POST['question']
+        src_hint = request.POST['src_hint']
+        points = request.POST['points']
+        answer = request.POST['answer']
+
+        db.collection(u'levels').document(level_id).set({
+                        u'question': question,
+                        u'src_hint': src_hint,
+                        u'points': int(points),
+                        u'answer':answer,
+                    })
+
+        messages.error(request, "Level has been added.")
+        return redirect('levels')
+    else:
+        return render(request, 'pages/add_level.html')
