@@ -167,3 +167,9 @@ footer p {
 .container {
   margin-bottom: 20px;
 }
+
+.skip-button {
+  color: #fff;
+  background-color: red;
+  border: unset;
+}

@@ -118,32 +118,37 @@ def play(request, code):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
-    if user['banned']:
-        return redirect('banned')
+    # TO-DO: add 404 page based on valid_levels array
+    if False:
+        return redirect('dashboard')
     else:
-        if code in user['completed_levels']:
-            messages.success(request, "You've already completed this level.")
-            return redirect('dashboard')
-        elif code == user['current_level'] or len(user['current_level']) == 0:
-            user_doc.update({u'current_level': code})
-            level = db.collection(u'levels').document(code).get().to_dict()
-            question = level['question']
-            points = level['points']
-            src_hint = level['src_hint']
-            answer = level['answer']
+        if user['banned']:
+            return redirect('banned')
         else:
-            code = user['current_level']
-            messages.error(request, "You must complete your level first.")
-            return redirect('play', code=code)
-    
-        context = {
-            'id': code,
-            'question': question,
-            'points': points,
-            'hint': src_hint,
-        }
+            if code in user['completed_levels']:
+                messages.success(request, "You've already completed this level.")
+                return redirect('dashboard')
 
-        return render(request, 'pages/level.html', context)
+            elif code == user['current_level'] or len(user['current_level']) == 0:
+                user_doc.update({u'current_level': code})
+                level = db.collection(u'levels').document(code).get().to_dict()
+                question = level['question']
+                points = level['points']
+                src_hint = level['src_hint']
+                answer = level['answer']
+            else:
+                code = user['current_level']
+                messages.error(request, "You must complete your level first.")
+                return redirect('play', code=code)
+        
+            context = {
+                'id': code,
+                'question': question,
+                'points': points,
+                'hint': src_hint,
+            }
+
+            return render(request, 'pages/level.html', context)
 
 @login_required(login_url='login')
 def banned(request):
@@ -186,7 +191,6 @@ def users(request):
         return render(request, 'pages/users.html', context)
     else:
         return redirect('dashboard')
-
 
 @login_required(login_url='login')
 def user(request):
@@ -274,6 +278,31 @@ def submit(request, code):
             })
             messages.error(request, "lmfao ye kya likh rha hai bhai hasi aa gayi thodi sorry")
             return redirect('play', code=current_level)
+
+@login_required(login_url='login')
+def skip_level(request, code):
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
+    completed_levels = user['completed_levels']
+    completed_levels.append(code)
+
+    user_doc.update({
+        u'completed_levels': completed_levels,
+        u'current_level': ''
+    })
+
+    logs = db.collection(u'logs')
+    logs.add({
+        u'username': username,
+        u'level': code,
+        u'content': 'Skipped level',
+        u'timestamp': time.time()
+    })
+
+    return redirect('dashboard')
+
 @login_required(login_url='login')
 def levels(request):
     current_user = User.objects.get(id=request.user.id)
@@ -281,7 +310,7 @@ def levels(request):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
-    if user['superuser'] == True:
+    if user['superuser']:
         levels = db.collection(u'levels').stream()
         database = db
         context = {
@@ -300,7 +329,7 @@ def level(request):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
-    if user['superuser'] == True:
+    if user['superuser']:
         if request.method == "POST":
             level_id = request.POST['level_id'] 
             level = db.collection(u'levels').document(level_id).get().to_dict()
@@ -329,11 +358,11 @@ def add_level(request):
         answer = request.POST['answer']
 
         db.collection(u'levels').document(level_id).set({
-                        u'question': question,
-                        u'src_hint': src_hint,
-                        u'points': int(points),
-                        u'answer':answer,
-                    })
+            u'question': question,
+            u'src_hint': src_hint,
+            u'points': int(points),
+            u'answer': answer,
+        })
 
         messages.error(request, "Level has been added.")
         return redirect('levels')

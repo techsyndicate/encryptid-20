@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout', views.logout, name="logout"),
     path('play/<str:code>', views.play, name="play"),
     path('play/<str:code>/submit', views.submit, name="submit"),
+    path('play/<str:code>/skip', views.skip_level, name="skip_level"),
     path('why-am-i-banned', views.banned, name="banned"),
     path('admin', views.admin_dashboard, name="admin_dashboard"),
     path('admin/users',views.users,name="users"),
