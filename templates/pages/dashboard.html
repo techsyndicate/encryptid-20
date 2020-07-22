@@ -3,7 +3,7 @@
 {% block header %}Dashboard{% endblock %}
 {% block content %}
 <p>Hey {{ username }}, welcome to Encryptid 2020<br/>
-You've completed {{ completed_levels }} level(s). Check out the <a href="#">Leaderboard</a> to keep up with the game.</p>
+You've completed {{ completed_levels }} level(s). Check out the <a href="{% url 'leaderboard' %}">Leaderboard</a> to keep up with the game.</p>
 <p>Choose any country from the map below to find your level.<br/>
 PS: Choose wisely. There's no coming back until you solve it.</p>
 <div id="map" style="width: 1000px; height: 600px;"></div>

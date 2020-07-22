@@ -76,7 +76,8 @@ def register(request):
                         u'banned': False,
                         u'email': email,
                         u'completed_levels': [],
-                        u'current_level': ''
+                        u'len_comp_levels': 0,
+                        u'current_level': '',
                     })
 
                     messages.success(request, 'You are now registered and can log in')
@@ -265,7 +266,8 @@ def submit(request, code):
                 u'current_level': '',
                 u'last_answer_time': time.time(),
                 u'completed_levels': completed_levels,
-                u'user_points': user_points + level_points
+                u'len_comp_levels': len(completed_levels),
+                u'user_points': user_points + level_points,
             })
             messages.success(request, "Correct answer, good work there.")
             return redirect('dashboard')
@@ -291,6 +293,7 @@ def skip_level(request, code):
 
     user_doc.update({
         u'completed_levels': completed_levels,
+        u'len_comp_levels': len(completed_levels),
         u'current_level': ''
     })
 
@@ -391,3 +394,18 @@ def logs(request):
         return render(request, 'pages/logs.html', context)
     else:
         return redirect('dashboard')
+
+
+
+
+def leaderboard(request):
+    leaderboard = db.collection(u'users')
+    leaderboard = leaderboard.order_by(u'user_points', direction=firestore.Query.DESCENDING).stream()
+    user_docs = list(log.to_dict() for log in leaderboard)
+    database = db
+    context = {
+            'user_docs': user_docs,
+            'database': database
+    }
+
+    return render(request, 'pages/leaderboard.html', context)

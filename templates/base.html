@@ -18,8 +18,7 @@
       width: 150px;
       font-size: 2rem;
     }
-  </style>
-  <style>
+
     body {color:white;background-color:black}
     #customers {
       font-family: 'Lexend Deca';
@@ -39,9 +38,16 @@
       padding-top: 7px;
       padding-bottom: 7px;
       text-align: center;
-      background-color: #16e16e;
+      background-color: #28a745;
       font-size:2.5rem;
       color: white;
+    }
+
+    #count tr, #nc-count tr {
+      counter-increment: row-num;
+    }
+    #count tr td:first-child::before, #nc-count tr td:first-child::before {
+        content: counter(row-num);
     }
   </style>
 </head>
@@ -54,7 +60,7 @@
     <a href="{% url 'login' %}">Login</a>
     <a href="{% url 'register' %}">Register</a>
     {% endif %}
-    <a href="#">Leaderboard</a>
+    <a href="{% url 'leaderboard' %}">Leaderboard</a>
     <a href="{% url 'dashboard' %}">Dashboard</a>
     <a href="javascript:void(0);" class="icon" onclick="responsive()"><i class="fa fa-bars"></i></a>
   </div>

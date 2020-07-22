@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/levels/level/delete',views.delete_level,name="delete_level"),
     path('admin/levels/add_level',views.add_level,name="add_level"),
     path('admin/logs',views.logs,name="logs"),
+    path('leaderboard', views.leaderboard, name="leaderboard"),
 ]
