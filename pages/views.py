@@ -1,5 +1,6 @@
 import requests, time
 from dotenv import load_dotenv
+from firebase_admin import firestore
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.contrib import messages, auth
@@ -378,9 +379,9 @@ def logs(request):
     user = user_doc.get().to_dict()
 
     if user['superuser']:
-        logs = db.collection(u'logs').stream()
-        ordered_logs = logs.order_by(u'timestamp', direction=firestore.Query.DESCENDING)
-        log_docs = list(event.to_dict() for event in ordered_logs)
+        logs = db.collection(u'logs')
+        logs = logs.order_by(u'timestamp', direction=firestore.Query.DESCENDING).stream()
+        log_docs = list(log.to_dict() for log in logs)
         database = db
         context = {
             'log_docs': log_docs,
