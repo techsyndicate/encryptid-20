@@ -1,9 +1,43 @@
-{% extends 'base.html' %}
-{% block header %}
-<h3 style="color: #16e16e;">{{ user.name }}</h3>
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Encryptid 2020</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="shortcut icon" href="https://github.com/techsyndicate.png"/>
+  <link rel="stylesheet" href="{% static 'css/skeleton.css' %}"/>
+  <link rel="stylesheet" href="{% static 'css/normalize.css' %}"/>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" media="all" href="{% static 'map/jquery-jvectormap-2.0.5.css' %}"/>
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <style>
+    .aa_btn {
+      height: 150px;
+      width: 150px;
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar" class="topnav">
+    <a href="{% url 'index' %}" id="logo"><img class="logo" src="https://github.com/techsyndicate.png"></a>
+    <a href="{% url 'logout' %}">Logout</a>
+    <a href="#">Leaderboard</a>
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="javascript:void(0);" class="icon" onclick="responsive()"><i class="fa fa-bars"></i></a>
+  </div>
+  {% if messages %}
+  {% for message in messages %}
+  <div class="container">
+    <p>{{ message }}</p>
+  </div>
+  {% endfor %}
+  {% endif %}
+  <div class="container"><h1>
+<h3 style="color: #16e16e;">{{ user.name }}</h3></h1>
 <hr><br>
-{% endblock %}
-{% block content %}
 <div class="row">
     <div class="reqd-details">
         <span>Email</span>
@@ -47,4 +81,20 @@
         color: #fff;
     }
 </style>
-{% endblock %}
+</div>
+<footer>
+  <hr><p>Tech Syndicate</p>
+</footer>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<script>
+   responsive = () => {
+    let nav = document.getElementById("navbar");
+    if (nav.className === "topnav") {
+      nav.className += " responsive";
+    } else {
+      nav.className = "topnav";
+    }
+  }
+</script>
+</body>
+</html>
