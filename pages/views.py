@@ -379,8 +379,8 @@ def logs(request):
 
     if user['superuser']:
         logs = db.collection(u'logs').stream()
-        logs.order_by(u'timestamp', direction=firestore.Query.DESCENDING)
-        log_docs = list(event.to_dict() for event in logs)
+        ordered_logs = logs.order_by(u'timestamp', direction=firestore.Query.DESCENDING)
+        log_docs = list(event.to_dict() for event in ordered_logs)
         database = db
         context = {
             'log_docs': log_docs,
