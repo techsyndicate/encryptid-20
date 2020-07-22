@@ -368,3 +368,24 @@ def add_level(request):
         return redirect('levels')
     else:
         return render(request, 'pages/add_level.html')
+
+
+@login_required(login_url='login')
+def logs(request):
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
+
+    if user['superuser']:
+        logs = db.collection(u'logs').stream()
+        log_docs = list(event.to_dict() for event in logs)
+        database = db
+        context = {
+            'log_docs': log_docs,
+            'database': database
+        }
+
+        return render(request, 'pages/logs.html', context)
+    else:
+        return redirect('dashboard')

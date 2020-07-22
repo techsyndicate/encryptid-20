@@ -5,6 +5,6 @@
 {% block content %}
 <center>
 <a href="{% url 'users' %}"><button type="submit" class="button-primary aa_btn">Users</button></a>&nbsp;&nbsp; &nbsp;&nbsp;
-<button type="submit" class="button-primary aa_btn">Logs</button>&nbsp;&nbsp; &nbsp;&nbsp;
+<a href="{% url 'logs' %}"><button type="submit" class="button-primary aa_btn">Logs</button></a>&nbsp;&nbsp; &nbsp;&nbsp;
 <a href="{% url 'levels' %}"><button type="submit" class="button-primary aa_btn">Levels</button></a>&nbsp;&nbsp; &nbsp;&nbsp;</center>
 {% endblock %}

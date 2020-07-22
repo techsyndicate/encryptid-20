@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block header %}
+<center><h1 style="font-size: 5rem;">Logs</h1></center>
+{% endblock %}
+{% block content %}
+<table id="customers">
+    <tr>
+      <th>Username</th>
+      <th>Level</th>
+      <th>Timestamp</th>
+      <th>Content</th>
+    </tr>
+    {% for log in log_docs %}
+        <tr>
+        <td>{{ log.username }}</td>
+        <td>{{ log.level }}</td>
+        <td>{{ log.timestamp }}</td>
+        <td>{{ log.content }}</td>
+        </tr>
+    {% endfor %}
+  </table>
+  
+{% endblock %}
