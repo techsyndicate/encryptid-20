@@ -4,20 +4,19 @@
 {% endblock %}
 {% block content %}
 <table id="customers">
+  <tr>
+    <th>Rank</th>
+    <th>Username</th>
+    <th>Levels Completed</th>
+  </tr>
+  <tbody id="count">
+  {% for player in leaderboard %}
     <tr>
-      <th>Rank</th>
-      <th>Username</th>
-      <th>Levels Completed</th>
+      <td></td>
+      <td>{{ player.uid }}</td>
+      <td>{{ player.len_comp_levels }}</td>
     </tr>
-    <tbody id="count">
-    {% for user in user_docs %}
-        <tr>
-        <td></td>
-        <td>{{ user.uid }}</td>
-        <td>{{ user.len_comp_levels }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-  
+  {% endfor %}
+  </tbody>
+</table>
 {% endblock %}

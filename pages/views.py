@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 from pages.db import db
 from django.http import HttpResponseRedirect
 
-
 def index(request):
     return render(request, 'pages/index.html')
 
@@ -48,47 +47,47 @@ def register(request):
         if User.objects.filter(username=username).exists():
             messages.error(request, 'That username is taken')
             return redirect('register')
+
+        elif User.objects.filter(email=email).exists():
+            messages.error(request, 'That email is being used')
+            return redirect('register')
+
         else:
-            if User.objects.filter(email=email).exists():
-                messages.error(request, 'That email is being used')
-                return redirect('register')
+            recaptcha_response = request.POST.get('g-recaptcha-response')
+            data = {
+                'secret': settings.RECAPTCHA_SECRET_KEY,
+                'response': recaptcha_response
+            }
+            r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+            result = r.json()
+
+            if result['success']:
+                user = User.objects.create_user(username=username, password=password, email=email,
+                first_name=first_name, last_name=last_name)
+                user.save()
+
+                db.collection(u'users').document(username).set({
+                    u'uid': username,
+                    u'name': name,
+                    u'current_level': 0,
+                    u'last_answer_time':0,
+                    u'user_points': 0,
+                    u'superuser': False,
+                    u'banned': False,
+                    u'email': email,
+                    u'completed_levels': [],
+                    u'len_comp_levels': 0,
+                    u'current_level': '',
+                })
+                messages.success(request, 'You are now registered and can log in')
+                return redirect('login')
+
             else:
-                recaptcha_response = request.POST.get('g-recaptcha-response')
-                data = {
-                    'secret': settings.RECAPTCHA_SECRET_KEY,
-                    'response': recaptcha_response
-                }
-                r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
-                result = r.json()
+                messages.error(request, "Invalid reCAPTCHA. Please try again.")
+                return redirect('register')
 
-                if result['success']:
-                    user = User.objects.create_user(username=username, password=password, email=email,
-                    first_name=first_name, last_name=last_name)
-                    user.save()
-
-                    db.collection(u'users').document(username).set({
-                        u'uid': username,
-                        u'name': name,
-                        u'current_level': 0,
-                        u'last_answer_time':0,
-                        u'user_points': 0,
-                        u'superuser': False,
-                        u'banned': False,
-                        u'email': email,
-                        u'completed_levels': [],
-                        u'len_comp_levels': 0,
-                        u'current_level': '',
-                    })
-
-                    messages.success(request, 'You are now registered and can log in')
-                    return redirect('login')
-                else:
-                    messages.error(request, "Invalid reCAPTCHA. Please try again.")
-                    return redirect('register')
-
-    else:
-        context = { 'site_key': settings.RECAPTCHA_SITE_KEY }
-        return render(request, 'pages/register.html', context)
+    context = { 'site_key': settings.RECAPTCHA_SITE_KEY }
+    return render(request, 'pages/register.html', context)
 
 @login_required(login_url='login')
 def dashboard(request):
@@ -99,13 +98,13 @@ def dashboard(request):
 
     if user['banned']:
         return redirect('banned')
-    else:
-        context = {
-            'username': username,
-            'completed_levels': completed_levels,
-            'lolthis': 'red'
-        }
-        return render(request, 'pages/dashboard.html', context)
+    
+    context = {
+        'username': username,
+        'completed_levels': completed_levels,
+        'lolthis': 'red'
+    }
+    return render(request, 'pages/dashboard.html', context)
 
 def logout(request):
     auth.logout(request)
@@ -119,9 +118,10 @@ def play(request, code):
     username = current_user.username
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
+    valid_levels = db.collection(u'levels').document('valid_levels').get().to_dict()['valid_levels']
 
-    # TO-DO: add 404 page based on valid_levels array
-    if False:
+    if code not in valid_levels:
+        messages.error(request, "This is not a valid level.")
         return redirect('dashboard')
     else:
         if user['banned']:
@@ -138,6 +138,7 @@ def play(request, code):
                 points = level['points']
                 src_hint = level['src_hint']
                 answer = level['answer']
+
             else:
                 code = user['current_level']
                 messages.error(request, "You must complete your level first.")
@@ -172,8 +173,8 @@ def admin_dashboard(request):
 
     if user['superuser']:
         return render(request, 'pages/admin_dashboard.html')
-    else:
-        return redirect('dashboard')
+
+    return redirect('dashboard')
 
 @login_required(login_url='login')
 def users(request):
@@ -184,15 +185,10 @@ def users(request):
 
     if user['superuser']:
         users = db.collection(u'users').stream()
-        database = db
-        context = {
-            'users': users,
-            'database': database
-        }
-
+        context = { 'users': users }
         return render(request, 'pages/users.html', context)
-    else:
-        return redirect('dashboard')
+
+    return redirect('dashboard')
 
 @login_required(login_url='login')
 def user(request):
@@ -205,12 +201,10 @@ def user(request):
         if request.method == "POST":
             user_id = request.POST['user_id'] 
             user = db.collection(u'users').document(user_id).get().to_dict()
-            context = {
-                'user': user,
-            }
+            context = { 'user': user }
             return render(request, 'pages/user.html', context)
-    else:
-        return redirect('dashboard')
+
+    return redirect('dashboard')
 
 @login_required(login_url='login')
 def delete_user(request):
@@ -224,11 +218,9 @@ def ban_user(request):
     if request.method == "POST":
         user_id = request.POST['user_id']
         user = db.collection(u'users').document(user_id)
-        user.update({u'banned': True})
+        user.update({ u'banned': True })
         user = db.collection(u'users').document(user_id).get().to_dict()
-        context = {
-            'user': user,
-        }
+        context = { 'user': user }
         return render(request, 'pages/user.html', context)
 
 @login_required(login_url='login')
@@ -236,11 +228,9 @@ def unban_user(request):
     if request.method == "POST":
         user_id = request.POST['user_id']
         user = db.collection(u'users').document(user_id)
-        user.update({u'banned': False})
+        user.update({ u'banned': False })
         user = db.collection(u'users').document(user_id).get().to_dict()
-        context = {
-            'user': user,
-        }
+        context = { 'user': user }
         return render(request, 'pages/user.html', context)
 
 @login_required(login_url='login')
@@ -271,6 +261,7 @@ def submit(request, code):
             })
             messages.success(request, "Correct answer, good work there.")
             return redirect('dashboard')
+
         else:
             logs = db.collection(u'logs')
             logs.add({
@@ -317,14 +308,10 @@ def levels(request):
     if user['superuser']:
         levels = db.collection(u'levels').stream()
         database = db
-        context = {
-            'levels': levels,
-            'database': database
-        }
-
+        context = { 'levels': levels }
         return render(request, 'pages/admin_levels.html', context)
-    else:
-        return redirect('dashboard')
+
+    return redirect('dashboard')
 
 @login_required(login_url='login')
 def level(request):
@@ -342,8 +329,8 @@ def level(request):
                 'level_id':level_id,
             }
             return render(request, 'pages/admin_level.html', context)
-    else:
-        return redirect('dashboard')
+
+    return redirect('dashboard')
 
 @login_required(login_url='login')
 def delete_level(request):
@@ -370,9 +357,8 @@ def add_level(request):
 
         messages.error(request, "Level has been added.")
         return redirect('levels')
-    else:
-        return render(request, 'pages/add_level.html')
 
+    return render(request, 'pages/add_level.html')
 
 @login_required(login_url='login')
 def logs(request):
@@ -385,27 +371,15 @@ def logs(request):
         logs = db.collection(u'logs')
         logs = logs.order_by(u'timestamp', direction=firestore.Query.DESCENDING).stream()
         log_docs = list(log.to_dict() for log in logs)
-        database = db
-        context = {
-            'log_docs': log_docs,
-            'database': database
-        }
-
+        context = { 'log_docs': log_docs }
         return render(request, 'pages/logs.html', context)
-    else:
-        return redirect('dashboard')
 
-
-
+    return redirect('dashboard')
 
 def leaderboard(request):
     leaderboard = db.collection(u'users')
-    leaderboard = leaderboard.order_by(u'user_points', direction=firestore.Query.DESCENDING).stream()
-    user_docs = list(log.to_dict() for log in leaderboard)
-    database = db
-    context = {
-            'user_docs': user_docs,
-            'database': database
-    }
+    leaderboard = leaderboard.order_by(u'user_points', direction=firestore.Query.DESCENDING).order_by(u'last_answer_time', direction=firestore.Query.ASCENDING).stream()
+    leaderboard = list(player.to_dict() for player in leaderboard)
+    context = { 'leaderboard': leaderboard }
 
     return render(request, 'pages/leaderboard.html', context)
