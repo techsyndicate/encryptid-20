@@ -66,7 +66,7 @@ def register(request):
                 user = User.objects.create_user(username=username, password=password, email=email,
                 first_name=first_name, last_name=last_name)
                 user.save()
-                player = Player(user=user)
+                player = Player(users=user)
                 player.save()
 
                 db.collection(u'users').document(username).set({
@@ -220,8 +220,11 @@ def delete_user(request):
 def ban_user(request):
     if request.method == "POST":
         user_id = request.POST['user_id']
+        current_user = User.objects.get(username=user_id)
         user = db.collection(u'users').document(user_id)
         user.update({ u'banned': True })
+        current_user.player.banned = True
+        current_user.player.save(update_fields=["banned"])
         user = db.collection(u'users').document(user_id).get().to_dict()
         context = { 'user': user }
         return render(request, 'pages/user.html', context)
@@ -230,8 +233,11 @@ def ban_user(request):
 def unban_user(request):
     if request.method == "POST":
         user_id = request.POST['user_id']
+        current_user = User.objects.get(username=user_id)
         user = db.collection(u'users').document(user_id)
         user.update({ u'banned': False })
+        current_user.player.banned = False
+        current_user.player.save(update_fields=["banned"])
         user = db.collection(u'users').document(user_id).get().to_dict()
         context = { 'user': user }
         return render(request, 'pages/user.html', context)
@@ -266,10 +272,10 @@ def submit(request, code):
                 u'user_points': user_points + level_points,
             })
 
-            last_answer_time = time.time()
-            num_completed_levels = len(completed_levels)
-            player_points += level_points
-            current_user.save(update_fields=['last_answer_time', 'num_completed_levels', 'user_points'])
+            current_user.player.last_answer_time = time.time()
+            current_user.player.num_completed_levels = len(completed_levels)
+            current_user.player.user_points += level_points
+            current_user.player.save(update_fields=["last_answer_time", "num_completed_levels", "user_points"])
 
             messages.success(request, "Correct answer, good work there.")
             return redirect('dashboard')
@@ -393,7 +399,7 @@ def logs(request):
     return redirect('dashboard')
 
 def leaderboard(request):
-    leaderboard = User.player.objects.filter(banned=True).order_by('-user_points', 'last_answer_time')
+    leaderboard = User.objects.filter(player__banned=False).order_by('-player__user_points', 'player__last_answer_time')
     context = { 'leaderboard': leaderboard }
 
     return render(request, 'pages/leaderboard.html', context)

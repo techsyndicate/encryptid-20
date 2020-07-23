@@ -10,11 +10,11 @@
     <th>Levels Completed</th>
   </tr>
   <tbody id="count">
-  {% for player in leaderboard %}
+  {% for each_player in leaderboard %}
     <tr>
       <td></td>
-      <td>{{ player.uid }}</td>
-      <td>{{ player.len_comp_levels }}</td>
+      <td>{{ each_player.username }}</td>
+      <td>{{ each_player.player.num_completed_levels }}</td>
     </tr>
   {% endfor %}
   </tbody>
