@@ -5,10 +5,16 @@
   <br />
   <form method="POST" action="{% url 'submit' id %}">
     {% csrf_token %}
-    <input type="text" name="answer" placeholder="Your answer" /><br /><br />
+    <input type="text" name="answer" placeholder="Your answer" required/><br /><br />
     <button class="button-primary" type="submit">Submit</button>
   </form><br/>
-  <a href="{% url 'skip_level' id %}"><button class="skip-button">Skip</button></a>
+  <button class="skip-button" onclick="$('#confirm-box').toggle();">Skip</button>
+</div>
+
+<div id="confirm-box">
+  <p>Are you sure you want to skip the level?</p>
+  <a href="{% url 'skip_level' id %}"><button class="skip-button">Yes</button></a>
+  <button class="button-primary" onclick="$('#confirm-box').toggle();">No</button>
 </div>
 
 

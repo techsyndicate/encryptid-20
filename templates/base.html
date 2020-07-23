@@ -12,44 +12,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" media="all" href="{% static 'map/jquery-jvectormap-2.0.5.css' %}"/>
   <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-  <style>
-    .aa_btn {
-      height: 150px;
-      width: 150px;
-      font-size: 2rem;
-    }
-
-    body {color:white;background-color:black}
-    #customers {
-      font-family: 'Lexend Deca';
-      border-collapse: collapse;
-      width: 100%;
-    }
-    
-    #customers td, #customers th {
-      padding: 15px;
-    }
-    
-    #customers tr:nth-child(even){color:white;}
-    
-    #customers tr:hover {background-color: black;}
-    
-    #customers th {
-      padding-top: 7px;
-      padding-bottom: 7px;
-      text-align: center;
-      background-color: #28a745;
-      font-size:2.5rem;
-      color: white;
-    }
-
-    #count tr, #nc-count tr {
-      counter-increment: row-num;
-    }
-    #count tr td:first-child::before, #nc-count tr td:first-child::before {
-        content: counter(row-num);
-    }
-  </style>
 </head>
 <body>
   <div id="navbar" class="topnav">

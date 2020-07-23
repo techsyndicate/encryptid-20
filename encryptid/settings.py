@@ -27,6 +27,7 @@ SECRET_KEY = 'valctzc*t(qn_jklsmllb1o66cw-8&kxp^t$ozl$th+^+%x&9&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
 
