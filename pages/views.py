@@ -7,6 +7,7 @@ from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from pages.db import db
+from pages.models import Player
 from django.http import HttpResponseRedirect
 
 def index(request):
@@ -65,6 +66,8 @@ def register(request):
                 user = User.objects.create_user(username=username, password=password, email=email,
                 first_name=first_name, last_name=last_name)
                 user.save()
+                player = Player(user=user)
+                player.save()
 
                 db.collection(u'users').document(username).set({
                     u'uid': username,
@@ -237,6 +240,9 @@ def unban_user(request):
 def submit(request, code):
     current_user = User.objects.get(id=request.user.id)
     username = current_user.username
+    num_completed_levels = current_user.player.num_completed_levels
+    last_answer_time = current_user.player.last_answer_time
+    player_points = current_user.player.user_points
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
@@ -259,6 +265,12 @@ def submit(request, code):
                 u'len_comp_levels': len(completed_levels),
                 u'user_points': user_points + level_points,
             })
+
+            last_answer_time = time.time()
+            num_completed_levels = len(completed_levels)
+            player_points += level_points
+            current_user.save(update_fields=['last_answer_time', 'num_completed_levels', 'user_points'])
+
             messages.success(request, "Correct answer, good work there.")
             return redirect('dashboard')
 
@@ -277,6 +289,7 @@ def submit(request, code):
 def skip_level(request, code):
     current_user = User.objects.get(id=request.user.id)
     username = current_user.username
+    num_completed_levels = current_user.player.num_completed_levels
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
     completed_levels = user['completed_levels']
@@ -287,6 +300,9 @@ def skip_level(request, code):
         u'len_comp_levels': len(completed_levels),
         u'current_level': ''
     })
+
+    num_completed_levels = len(completed_levels)
+    current_user.player.save(update_fields=['num_completed_levels'])
 
     logs = db.collection(u'logs')
     logs.add({
@@ -377,9 +393,7 @@ def logs(request):
     return redirect('dashboard')
 
 def leaderboard(request):
-    leaderboard = db.collection(u'users')
-    leaderboard = leaderboard.order_by(u'user_points', direction=firestore.Query.DESCENDING).order_by(u'last_answer_time', direction=firestore.Query.ASCENDING).stream()
-    leaderboard = list(player.to_dict() for player in leaderboard)
+    leaderboard = User.player.objects.filter(banned=True).order_by('-user_points', 'last_answer_time')
     context = { 'leaderboard': leaderboard }
 
     return render(request, 'pages/leaderboard.html', context)
