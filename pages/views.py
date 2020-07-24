@@ -260,13 +260,19 @@ def submit(request, code):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
+    total_players = db.collection(u'users').stream()
+    total_players = list(player.to_dict() for player in total_players)
+    total_players = len(total_players)
+
     if request.method == "POST":
         answer = request.POST['answer']
         answer = ''.join(answer.split()).lower()
 
         current_level = user['current_level']
-        level = db.collection(u'levels').document(current_level).get().to_dict()
+        level_doc = db.collection(u'levels').document(current_level)
+        level = level_doc.get().to_dict()
         level_points = level['points']
+        level_completed_by = level['completed_by']
         completed_levels = user['completed_levels']
         user_points = user['user_points']
         new_countries_color = user['countries_color']
@@ -274,20 +280,43 @@ def submit(request, code):
         if answer == level['answer']:
             completed_levels.append(current_level)
             new_countries_color[current_level] = 'green'
+            
+            if level_completed_by >= 20:
+                level_points = float('%.4f' %(level_points - level_points/total_players))
+                level_doc.update({
+                    u'points': level_points,
+                    u'completed_by': level_completed_by + 1
+                }) 
+            
+                user_doc.update({
+                    u'current_level': '',
+                    u'last_answer_time': time.time(),
+                    u'completed_levels': completed_levels,
+                    u'len_comp_levels': len(completed_levels),
+                    u'user_points': user_points + level_points,
+                    u'countries_color': new_countries_color,
+                })
 
-            user_doc.update({
-                u'current_level': '',
-                u'last_answer_time': time.time(),
-                u'completed_levels': completed_levels,
-                u'len_comp_levels': len(completed_levels),
-                u'user_points': user_points + level_points,
-                u'countries_color':new_countries_color,
-            })
+                current_user.player.last_answer_time = time.time()
+                current_user.player.num_completed_levels = len(completed_levels)
+                current_user.player.user_points += level_points
+                current_user.player.save(update_fields=["last_answer_time", "num_completed_levels", "user_points"])
 
-            current_user.player.last_answer_time = time.time()
-            current_user.player.num_completed_levels = len(completed_levels)
-            current_user.player.user_points += level_points
-            current_user.player.save(update_fields=["last_answer_time", "num_completed_levels", "user_points"])
+            else:
+                level_doc.update({ u'completed_by': level_completed_by + 1 })
+                user_doc.update({
+                    u'current_level': '',
+                    u'last_answer_time': time.time(),
+                    u'completed_levels': completed_levels,
+                    u'len_comp_levels': len(completed_levels),
+                    u'user_points': user_points + level_points,
+                    u'countries_color': new_countries_color,
+                })
+
+                current_user.player.last_answer_time = time.time()
+                current_user.player.num_completed_levels = len(completed_levels)
+                current_user.player.user_points += level_points
+                current_user.player.save(update_fields=["last_answer_time", "num_completed_levels", "user_points"])
 
             messages.success(request, "Correct answer, good work there.")
             return redirect('dashboard')
@@ -307,22 +336,40 @@ def submit(request, code):
 def skip_level(request, code):
     current_user = User.objects.get(id=request.user.id)
     username = current_user.username
-    num_completed_levels = current_user.player.num_completed_levels
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
+    
+    total_players = db.collection(u'users').stream()
+    total_players = list(player.to_dict() for player in total_players)
+    total_players = len(total_players)
+
+    level_doc = db.collection(u'levels').document(code)
+    level = level_doc.get().to_dict()
+    level_points = level['points']
+    level_completed_by = level['completed_by']
     completed_levels = user['completed_levels']
     completed_levels.append(code)
+
     new_countries_color = user['countries_color']
     new_countries_color[code] = 'green'
-            
+
+    if level_completed_by >= 20:
+        level_points = float('%.4f' %(level_points - level_points/total_players))
+        level_doc.update({
+            u'points': level_points,
+            u'completed_by': level_completed_by + 1
+        })
+    else:
+        level_doc.update({ u'completed_by': level_completed_by + 1 })
+    
     user_doc.update({
         u'completed_levels': completed_levels,
-        u'len_comp_levels': len(completed_levels),
+        u'len_com_levels': len(completed_levels),
         u'current_level': '',
-        u'countries_color':new_countries_color,
+        u'countries_color': new_countries_color
     })
 
-    num_completed_levels = len(completed_levels)
+    current_user.player.num_completed_levels = len(completed_levels)
     current_user.player.save(update_fields=['num_completed_levels'])
 
     logs = db.collection(u'logs')
@@ -390,6 +437,7 @@ def add_level(request):
             u'src_hint': src_hint,
             u'points': int(points),
             u'answer': answer,
+            u'completed_by': 0
         })
 
         messages.error(request, "Level has been added.")
