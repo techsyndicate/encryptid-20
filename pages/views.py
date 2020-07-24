@@ -69,6 +69,8 @@ def register(request):
                 player = Player(users=user)
                 player.save()
 
+                countries_color = {'US':'red','CA':'red','IN':'red'}
+
                 db.collection(u'users').document(username).set({
                     u'uid': username,
                     u'name': name,
@@ -78,6 +80,7 @@ def register(request):
                     u'superuser': False,
                     u'banned': False,
                     u'email': email,
+                    u'countries_color':countries_color,
                     u'completed_levels': [],
                     u'len_comp_levels': 0,
                     u'current_level': '',
@@ -98,11 +101,16 @@ def dashboard(request):
     username = current_user.username
     user = db.collection(u'users').document(username).get().to_dict()
     completed_levels = len(user['completed_levels'])
+    countries_color = user['countries_color']
 
     if user['banned']:
         return redirect('banned')
     
+    c1color,c2color,c3color = countries_color['US'],countries_color['CA'],countries_color['IN']
     context = {
+        'c1color':c1color,
+        'c2color':c2color,
+        'c3color':c3color,
         'username': username,
         'completed_levels': completed_levels,
         'lolthis': 'red'
@@ -261,15 +269,19 @@ def submit(request, code):
         level_points = level['points']
         completed_levels = user['completed_levels']
         user_points = user['user_points']
+        new_countries_color = user['countries_color']
 
         if answer == level['answer']:
             completed_levels.append(current_level)
+            new_countries_color[current_level] = 'green'
+
             user_doc.update({
                 u'current_level': '',
                 u'last_answer_time': time.time(),
                 u'completed_levels': completed_levels,
                 u'len_comp_levels': len(completed_levels),
                 u'user_points': user_points + level_points,
+                u'countries_color':new_countries_color,
             })
 
             current_user.player.last_answer_time = time.time()
