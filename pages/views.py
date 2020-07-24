@@ -260,9 +260,8 @@ def submit(request, code):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
-    total_players = db.collection(u'users').stream()
-    total_players = list(player.to_dict() for player in total_players)
-    total_players = len(total_players)
+    total_players = User.objects.all().count()
+    print(total_players)
 
     if request.method == "POST":
         answer = request.POST['answer']
@@ -339,9 +338,7 @@ def skip_level(request, code):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
     
-    total_players = db.collection(u'users').stream()
-    total_players = list(player.to_dict() for player in total_players)
-    total_players = len(total_players)
+    total_players = User.objects.all().count()
 
     level_doc = db.collection(u'levels').document(code)
     level = level_doc.get().to_dict()
