@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from pages.db import db
 from pages.models import Player
 from django.http import HttpResponseRedirect
+from ratelimit.decorators import ratelimit
+from django.http import HttpResponse
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -36,6 +38,7 @@ def login(request):
     else:
         return render(request, 'pages/login.html')
 
+@ratelimit(key='ip', rate='2/d', method=['POST'], block=True)
 def register(request):
     if request.method == "POST":
         first_name = request.POST['first_name']
@@ -251,6 +254,7 @@ def unban_user(request):
         return render(request, 'pages/user.html', context)
 
 @login_required(login_url='login')
+@ratelimit(key='ip', rate='30/m', method=['GET', 'POST'], block=True)
 def submit(request, code):
     current_user = User.objects.get(id=request.user.id)
     username = current_user.username
@@ -332,6 +336,7 @@ def submit(request, code):
             return redirect('play', code=current_level)
 
 @login_required(login_url='login')
+@ratelimit(key='ip', rate='30/m', method=['GET', 'POST'], block=True)
 def skip_level(request, code):
     current_user = User.objects.get(id=request.user.id)
     username = current_user.username
