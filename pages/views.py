@@ -312,11 +312,14 @@ def skip_level(request, code):
     user = user_doc.get().to_dict()
     completed_levels = user['completed_levels']
     completed_levels.append(code)
-
+    new_countries_color = user['countries_color']
+    new_countries_color[code] = 'green'
+            
     user_doc.update({
         u'completed_levels': completed_levels,
         u'len_comp_levels': len(completed_levels),
-        u'current_level': ''
+        u'current_level': '',
+        u'countries_color':new_countries_color,
     })
 
     num_completed_levels = len(completed_levels)
