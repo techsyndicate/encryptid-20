@@ -96,7 +96,8 @@ def register(request):
                     u'len_comp_levels': 0,
                     u'current_level': '',
                 })
-                messages.success(request, 'You have been successfully registered.')
+                r_msg = f'{username} has been registered successfully.'
+                messages.success(request, r_msg)
                 return redirect('index')
 
             else:
