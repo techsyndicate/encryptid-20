@@ -75,7 +75,24 @@ def register(request):
                 player = Player(users=user)
                 player.save()
 
-                countries_color = {'US':'red','CA':'red','IN':'red'}
+                countries_color = {
+                    'US':'red',
+                    'CA':'red',
+                    'RU': 'red',
+                    'GL': 'red',
+                    'BR': 'red',
+                    'SA': 'red',
+                    'TN': 'red',
+                    'BG': 'red',
+                    'NZ': 'red',
+                    'AU': 'red',
+                    'LY': 'red',
+                    'CU': 'red',
+                    'CH': 'red',
+                    'FI': 'red',
+                    'GB': 'red',
+                    'JO': 'red'
+                    }
 
                 db.collection(u'users').document(username).set({
                     u'uid': username,
@@ -89,7 +106,7 @@ def register(request):
                     u'superuser': False,
                     u'banned': False,
                     u'email': email,
-                    u'countries_color':countries_color,
+                    u'countries_color': countries_color,
                     u'completed_levels': [],
                     u'len_comp_levels': 0,
                     u'current_level': '',
