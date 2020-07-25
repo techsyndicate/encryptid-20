@@ -96,8 +96,8 @@ def register(request):
                     u'len_comp_levels': 0,
                     u'current_level': '',
                 })
-                messages.success(request, 'You are now registered and can log in')
-                return redirect('login')
+                messages.success(request, 'You have been successfully registered.')
+                return redirect('index')
 
             else:
                 messages.error(request, "Invalid reCAPTCHA. Please try again.")
