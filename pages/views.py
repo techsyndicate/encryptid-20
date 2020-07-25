@@ -1,4 +1,4 @@
-import requests, time
+import requests, time, re
 from dotenv import load_dotenv
 from firebase_admin import firestore
 from django.shortcuts import render, redirect
@@ -38,7 +38,6 @@ def login(request):
     else:
         return render(request, 'pages/login.html')
 
-@ratelimit(key='ip', rate='2/d', method=['POST'], block=True)
 def register(request):
     if request.method == "POST":
         first_name = request.POST['first_name']
@@ -46,14 +45,19 @@ def register(request):
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
+        school = request.POST['school']
+        user_class = request.POST['class']
+        discord_username = request.POST['discord_username']
+        nc = request.POST.get('nc_check', False)
+        nc = True if nc == "on" else False
         name = f"{first_name} {last_name}"
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, 'That username is taken')
+            messages.error(request, 'That username is taken.')
             return redirect('register')
 
         elif User.objects.filter(email=email).exists():
-            messages.error(request, 'That email is being used')
+            messages.error(request, 'That email is being used.')
             return redirect('register')
 
         else:
@@ -77,6 +81,10 @@ def register(request):
                 db.collection(u'users').document(username).set({
                     u'uid': username,
                     u'name': name,
+                    u'school': school,
+                    u'class': user_class,
+                    u'discord_username': discord_username,
+                    u'nc': nc,
                     u'current_level': 0,
                     u'last_answer_time':0,
                     u'user_points': 0,
