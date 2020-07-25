@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
+import os, dj_database_url
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -29,7 +29,7 @@ SECRET_KEY = 'valctzc*t(qn_jklsmllb1o66cw-8&kxp^t$ozl$th+^+%x&9&'
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['localhost', 'encryptid.live']
+ALLOWED_HOSTS = ['localhost', 'encryptid.live', 'encryptid-20.herokuapp.com']
 
 
 # Application definition
@@ -87,6 +87,8 @@ DATABASES = {
     }
 }
 
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
