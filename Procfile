@@ -1,0 +1,1 @@
+web: gunicorn encryptid.wsgi --log-file -

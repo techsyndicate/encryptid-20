@@ -1,5 +1,24 @@
-{% extends 'base.html' %} {% block header %}
-<h1>Home Page</h1>
-{% endblock %} {% block content %}
-  <h1>Info about Encryptid</h1>
+{% extends 'base.html' %}
+{% block content %}
+<div style="text-align: center;">
+    <h1 style="font-size: 8rem; color: #16e16e; margin: 0 0 12px;">Encryptid</h1>
+    <h5>1st August 00:00 IST to 2nd August 23:59 IST</h5>
+    <div class="index-buttons">
+      <a href="https://ctrl.gq/encryptid/format"><button class="button-primary">Format</button></a>
+      &nbsp;&nbsp;
+      <a href="https://ctrl.gq/encryptid/server"><button class="button-primary">Discord</button></a>
+    </div>
+</div>
+  <section style="margin: 10% 0;">
+  <h2 style="color: #16e16e; margin: 0;">Guidelines</h2>
+    <ul style="margin-left: 22px;">
+      <li>The dashboard will contain a world map with 16 questions assigned to 16 individual countries. All the questions will be accessible from the start.</li>
+      <li>The top 6 participants will qualify for the finals which will take place as individual duels.</li>
+      <li>Lead confirmations will be on at specific timings which will be iterated on the discord server.</li>
+      <li>The number of tries to enter an answer is unlimited, therefore don't hesitate to try out any value which you think is the answer.</li>
+      <li>There is no specified answer format: a string "Foo Bar" or "foobar" will be interpreted the same way.</li>
+      <li>We have a zero-tolerance policy for cheating, and anyone found doing so will be disqualified immediately.</li>
+      <li>If you're new to the concept of cryptic hunts, check out the learning resource <a href="https://ctrl.gq/encryptidlr">here</a>.</li>
+    </ul>
+  </section>
 {% endblock %}

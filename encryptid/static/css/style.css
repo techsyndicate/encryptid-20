@@ -80,11 +80,15 @@ body {
 .card {
   display: block;
   padding: 25px;
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-left: 20%;
+  margin-right: 20%;
   margin-bottom: 5%;
   border: 2px solid #444;
   border-radius: 4px;
+}
+
+h1 {
+  font-size: 4rem;
 }
 
 a {
@@ -119,10 +123,6 @@ thead {
   padding: 10px;
 }
 
-form {
-  margin-bottom: 0;
-}
-
 #count tr, #nc-count tr {
   counter-increment: row-num;
 }
@@ -135,27 +135,20 @@ hr {
   margin: 0;
 }
 
-footer {
-  display: block;
-  margin: 20px 0 0 0;
-  text-align: center;
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  background-color: #000;
-  width: 100%;
-  z-index: 1;
+footer hr {
+  background-color: #ddd;
+  margin: 0;
 }
 
+.footer-text {
+  color: #ddd;
+  text-align: center;
+  padding: 12px;
+  margin: 0;
+}
 .prompt {
   padding: 16% 0;
   text-align: center;
-}
-
-footer p {
-  margin: 10px;
-  padding: 0;
-  color: #bbb;
 }
 
 .flash-success {
@@ -198,23 +191,19 @@ footer p {
 }
 
 #customers td, #customers th {
-  padding: 15px;
+  padding: 8px;
 }
 
 #customers tr:nth-child(even){
   color:white;
-}
-
-#customers tr:hover {
-  background-color: black;
+  background-color: #333;
 }
 
 #customers th {
-  padding-top: 7px;
-  padding-bottom: 7px;
   text-align: center;
   background-color: #28a745;
-  font-size:2.5rem;
+  font-size: 22px;
+  padding: 12px 0;
   color: white;
 }
 
@@ -243,4 +232,19 @@ footer p {
 
 .level {
   color: #fff;
+}
+
+@media only screen and (max-width: 600px) {
+  .card {
+    margin: 0 !important;
+  }
+}
+
+ul li {
+  font-size: 22px;
+}
+
+.index-buttons a {
+  display: inline-block;
+  margin: auto;
 }

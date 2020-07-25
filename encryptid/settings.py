@@ -26,10 +26,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'valctzc*t(qn_jklsmllb1o66cw-8&kxp^t$ozl$th+^+%x&9&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', 'encryptid.live']
 
 
 # Application definition
@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'encryptid.urls'

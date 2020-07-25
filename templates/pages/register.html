@@ -1,23 +1,37 @@
 {% extends 'base.html' %}
 {% block header %}
-<h1>Register</h1>
 {% endblock %}
 {% block content %}
+<div class="card">
 <form method="post" action="{% url 'register' %}">
     {% csrf_token %}
+    <h2 style="text-align: center;">Register</h2>
     <input name="first_name" type="text" placeholder="First name"><br><br>
     <input name="last_name" type="text" placeholder="Last name"><br><br>
     <input name="username" type="text" placeholder="Username"><br><br>
     <input name="email" type="email" placeholder="Email"><br><br>
-    <input name="discord_username" type="text" placeholder="Discord username"><br><br>
-    <input name="school" type="text" placeholder="School name"><br><br>
-    <input name="class" type="text" placeholder="Class"><br><br>
+    <input name="discord_username" type="text" placeholder="Discord username (foobar#9999)"><br><br>
+    <div id="school-details">
+        <input name="school" type="text" placeholder="School name"><br><br>
+    </div>
     <input name="password" type="password" placeholder="Password"><br><br>
     <label>
-        <input name="nc_check" type="checkbox">
+        <input name="nc_check" type="checkbox" id="nc-check">
         <span class="label-body">Non competitive</span>
     </label><br>
     <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div><br>
     <button type="submit" class="button-primary">Register</button>
 </form>
+</div>
+<script>
+    $(document).ready(function(){
+        $('#nc-check').change(function(){
+            if(this.checked){
+                $('#school-details').hide();
+            } else {
+                $('#school-details').show();
+            }
+        });
+    });
+</script>
 {% endblock %}

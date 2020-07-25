@@ -46,7 +46,6 @@ def register(request):
         email = request.POST['email']
         password = request.POST['password']
         school = request.POST['school']
-        user_class = request.POST['class']
         discord_username = request.POST['discord_username']
         nc = request.POST.get('nc_check', False)
         nc = True if nc == "on" else False
@@ -82,7 +81,6 @@ def register(request):
                     u'uid': username,
                     u'name': name,
                     u'school': school,
-                    u'class': user_class,
                     u'discord_username': discord_username,
                     u'nc': nc,
                     u'current_level': 0,

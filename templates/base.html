@@ -35,6 +35,11 @@
     <h1>{% block header %}{% endblock %}</h1>
     {% block content %} {% endblock %}
   </div>
+  <footer>
+    <hr/>
+    <p class="footer-text">Tech Syndicate</p>
+  </footer>
+  <script src="{% static 'index.js' %}"></script>
   <script src='https://www.google.com/recaptcha/api.js'></script>
   <script>
      responsive = () => {

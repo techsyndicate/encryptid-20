@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
-{% block header %}
-<center><h1 style="font-size: 5rem;">Leaderboard</h1></center>
-{% endblock %}
+{% block header %}Leaderboard{% endblock %}
 {% block content %}
-<table id="customers">
+<table id="customers" class="u-full-width">
+  <thead>
   <tr>
     <th>Rank</th>
     <th>Username</th>
-    <th>Levels Completed</th>
+    <th>Levels</th>
   </tr>
+  </thead>
   <tbody id="count">
   {% for each_player in leaderboard %}
     <tr>
