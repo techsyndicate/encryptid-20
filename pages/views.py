@@ -122,27 +122,36 @@ def register(request):
     context = { 'site_key': settings.RECAPTCHA_SITE_KEY }
     return render(request, 'pages/register.html', context)
 
+# @login_required(login_url='login')
+# def dashboard(request):
+#     current_user = User.objects.get(id=request.user.id)
+#     username = current_user.username
+#     user = db.collection(u'users').document(username).get().to_dict()
+#     completed_levels = len(user['completed_levels'])
+#     countries_color = user['countries_color']
+
+#     if user['banned']:
+#         return redirect('banned')
+    
+#     c1color,c2color,c3color = countries_color['US'],countries_color['CA'],countries_color['IN']
+#     context = {
+#         'c1color':c1color,
+#         'c2color':c2color,
+#         'c3color':c3color,
+#         'username': username,
+#         'completed_levels': completed_levels,
+#         'lolthis': 'red'
+#     }
+#     return render(request, 'pages/dashboard.html', context)
+
 @login_required(login_url='login')
 def dashboard(request):
     current_user = User.objects.get(id=request.user.id)
     username = current_user.username
-    user = db.collection(u'users').document(username).get().to_dict()
-    completed_levels = len(user['completed_levels'])
-    countries_color = user['countries_color']
-
-    if user['banned']:
-        return redirect('banned')
-    
-    c1color,c2color,c3color = countries_color['US'],countries_color['CA'],countries_color['IN']
     context = {
-        'c1color':c1color,
-        'c2color':c2color,
-        'c3color':c3color,
-        'username': username,
-        'completed_levels': completed_levels,
-        'lolthis': 'red'
+        'username':username,
     }
-    return render(request, 'pages/dashboard.html', context)
+    return render(request, 'pages/timer.html', context)
 
 def logout(request):
     auth.logout(request)

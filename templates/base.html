@@ -19,6 +19,7 @@
     {% if user.is_authenticated %}
     <a href="{% url 'logout' %}">Logout</a>
     {% else %}
+    <a href="{% url 'login' %}">Login</a>
     <a href="{% url 'register' %}">Register</a>
     {% endif %}
     <a href="{% url 'leaderboard' %}">Leaderboard</a>
@@ -35,7 +36,7 @@
     <h1>{% block header %}{% endblock %}</h1>
     {% block content %} {% endblock %}
   </div>
-  <footer>
+  <footer style="position: fixed;bottom: 0;width:100%">
     <hr/>
     <p class="footer-text">Tech Syndicate</p>
   </footer>
@@ -50,6 +51,36 @@
         nav.className = "topnav";
       }
     }
+  </script>
+  <script>
+    // Set the date we're counting down to
+    var countDownDate = new Date("Aug 1, 2020 24:00:00").getTime();
+    
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+    
+      // Get today's date and time
+      var now = new Date().getTime();
+    
+      // Find the distance between now and the count down date
+      var distance = countDownDate - now;
+    
+      // Time calculations for days, hours, minutes and seconds
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+      // Display the result in the element with id="demo"
+      document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+      + minutes + "m " + seconds + "s ";
+    
+      // If the count down is finished, write some text
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("demo").innerHTML = "0d 0h 0m 0s";
+      }
+    }, 1000);
   </script>
 </body>
 </html>
