@@ -1,4 +1,4 @@
-import requests, time, re
+import requests, time, re, random
 from dotenv import load_dotenv
 from firebase_admin import firestore
 from django.shortcuts import render, redirect
@@ -500,3 +500,39 @@ def leaderboard(request):
     context = { 'leaderboard': leaderboard }
 
     return render(request, 'pages/leaderboard.html', context)
+
+@login_required(login_url='login')
+def assign_duels(request):
+    users = db.collection(u'users').where(u'duels', u'==', True).stream()
+    users = list(user.id for user in users)
+    print('This worked part1')
+    duel_levels = db.collection(u'duel_levels').stream()
+    duel_levels = list(level.id for level in duel_levels)
+    for i in range(len(duel_levels)):
+        duel_levels.append(duel_levels[i])
+
+    print('This worked part2')
+    print(duel_levels)
+    for user in users:
+        user = db.collection(u'users').document(user)
+        level_for_user = random.choice(duel_levels)
+        duel_levels.remove(level_for_user)
+        user.update({
+            u'current_duel_level': level_for_user
+        })
+    return redirect('admin_dashboard')
+
+# # levels = duel_levels
+# #     for level in levels:
+# #         duel_levels.append(level)
+# #     print('This worked part3')
+# #     print(duel_levels)
+# #     print('This worked part4')
+#     for user in users:
+#         user = db.collection(u'users').document(user)
+#         level_for_user = random.choice(duel_levels)
+#         duel_levels.remove(level_for_user)
+#         user.update({
+#             u'current_duel_level': level_for_user
+#         })
+# #     print('This worked part5')

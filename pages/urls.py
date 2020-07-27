@@ -20,6 +20,7 @@ urlpatterns = [
     path('admin/levels/add_level',views.add_level,name="add_level"),
     path('admin/logs',views.logs,name="logs"),
     path('why-am-i-banned', views.banned, name="banned"),
+    path('admin/assign-duels', views.assign_duels, name="assign_duels"),
 ]
 
 '''
