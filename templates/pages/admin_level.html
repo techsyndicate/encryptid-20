@@ -7,7 +7,7 @@
 <div class="row">
     <div class="reqd-details">
         <span>Question</span>
-        <p>{{ level.question }}</p>
+        <p>{{ level.question |safe }}</p>
         <span>Source Code Hint</span>
         <p>{{ level.src_hint }}</p>
         <span>Points</span>
