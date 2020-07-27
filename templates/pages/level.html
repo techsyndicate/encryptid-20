@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block content %}
 <div class="level">
   <h4>Level for {{ id }} | {{ points }} Points</h4>
-  <div class="question">{{ question }}</div>
+  <div class="question">{{ question |safe }}</div>
   <br />
   <form method="POST" action="{% url 'submit' id %}">
     {% csrf_token %}
