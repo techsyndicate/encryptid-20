@@ -140,7 +140,6 @@ def register(request):
 #         'c3color':c3color,
 #         'username': username,
 #         'completed_levels': completed_levels,
-#         'lolthis': 'red'
 #     }
 #     return render(request, 'pages/dashboard.html', context)
 
@@ -231,7 +230,7 @@ def users(request):
     user = user_doc.get().to_dict()
 
     if user['superuser']:
-        users = db.collection(u'users').stream()
+        users = User.objects.all()
         context = { 'users': users }
         return render(request, 'pages/users.html', context)
 

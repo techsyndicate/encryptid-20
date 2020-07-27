@@ -46,7 +46,7 @@ $('#map').vectorMap({
         values: {
             // make it light green once 
             // the user completes that level
-            US: '{{ lolthis }}',
+            US:'red',
             CH:'red',
             GB:'red',
             KW:'red',

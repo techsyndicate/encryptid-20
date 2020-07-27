@@ -6,8 +6,8 @@
 {% for user in users %}
     <form id="my_form" name="linkform" action="{% url 'user' %}" method="POST">
     {% csrf_token %}
-    <input name="user_id" type="hidden" value="{{ user.id }}">
-<button type="submit" id="submitBtn" style="border-style:none;color:#16e16e;padding: 0;border: none;font-size:2.3rem;margin-bottom:2rem;"  data-validate="my_form">{{ user.id }}</button></td></form>
+    <input name="user_id" type="hidden" value="{{ user.username }}">
+<button type="submit" id="submitBtn" style="border-style:none;color:#16e16e;padding: 0;border: none;font-size:2.3rem;margin-bottom:2rem;"  data-validate="my_form">{{ user.username }}</button></td></form>
 {% endfor %}
 
 {% endblock %}
