@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block header %}
+<h1>Add Duel Level</h1>
+{% endblock %}
+{% block content %}
+  <form method="post" action="{% url 'add_duel_level' %}">
+    {% csrf_token %}
+    <input required name="level_id" type="text" placeholder="Level Name"><br><br>
+    <input required name="question" type="text" placeholder="Question"><br><br>
+    <input name="src_hint" type="text" placeholder="Source code hint"><br><br>
+    <input required name="winning_points" type="number" placeholder="Winning Points"><br><br>
+    <input required name="losing_points" type="number" placeholder="Losing Points"><br><br>
+    <input required name="answer" type="text" placeholder="Answer"><br><br>
+    <button class="button-primary" type="submit">Submit</button>
+  </form>
+{% endblock %}

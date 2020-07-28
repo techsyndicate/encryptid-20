@@ -22,7 +22,10 @@ urlpatterns = [
     path('why-am-i-banned', views.banned, name="banned"),
     path('admin/assign-duels', views.assign_duels, name="assign_duels"),
     path('duel', views.play_duel, name="play_duel"),
-    path('wait-for-next-duel', views.waiting_page, name="waiting_page")
+    path('wait-for-next-duel', views.waiting_page, name="waiting_page"),
+    path('admin/levels/duel_level',views.duel_level,name="duel_level"),
+    path('admin/levels/duel_level/delete',views.delete_duel_level,name="delete_duel_level"),
+    path('admin/levels/add_duel_level',views.add_duel_level,name="add_duel_level"),
 ]
 
 '''

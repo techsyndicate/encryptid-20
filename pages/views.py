@@ -435,8 +435,9 @@ def levels(request):
 
     if user['superuser']:
         levels = db.collection(u'levels').stream()
+        duel_levels = db.collection(u'duel_levels').stream()
         database = db
-        context = { 'levels': levels }
+        context = { 'levels': levels, 'duel_levels' : duel_levels }
         return render(request, 'pages/admin_levels.html', context)
 
     return redirect('dashboard')
@@ -630,3 +631,66 @@ def waiting_page(request):
         return redirect('dashboard')
 
     return render(request, 'pages/waiting_page.html')
+
+
+@login_required(login_url='login')
+def duel_level(request):
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
+
+    if user['superuser']:
+        if request.method == "POST":
+            level_id = request.POST['level_id'] 
+            level = db.collection(u'duel_levels').document(level_id).get().to_dict()
+            context = {
+                'level': level,
+                'level_id':level_id,
+            }
+            return render(request, 'pages/admin_duel_level.html', context)
+
+    return redirect('dashboard')
+
+
+@login_required(login_url='login')
+def delete_duel_level(request):
+    if request.method == "POST":
+        level_id = request.POST['level_id']
+        db.collection(u'duel_levels').document(level_id).delete()
+        return redirect('levels')
+
+
+@login_required(login_url='login')
+def add_duel_level(request):
+    current_user = User.objects.get(id=request.user.id)
+    username = current_user.username
+    user_doc = db.collection(u'users').document(username)
+    user = user_doc.get().to_dict()
+
+    if user['superuser']:
+        if request.method == "POST":
+            level_id = request.POST['level_id']
+            question = request.POST['question']
+            src_hint = request.POST['src_hint']
+            winning_points = request.POST['winning_points']
+            losing_points = request.POST['losing_points']
+            answer = request.POST['answer']
+
+            db.collection(u'duel_levels').document(level_id).set({
+                u'question': question,
+                u'src_hint': src_hint,
+                u'winning_points': int(winning_points),
+                u'losing_points': int(losing_points),
+                u'answer': answer,
+                u'end_time': 0,
+                u'completed': False,
+                u'winner': "",
+            })
+
+            messages.error(request, "Duel Level has been added.")
+            return redirect('levels')
+
+        return render(request, 'pages/add_duel_level.html')
+    
+    return redirect('dashboard')

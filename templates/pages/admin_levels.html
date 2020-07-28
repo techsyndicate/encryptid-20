@@ -11,4 +11,13 @@
     <input name="level_id" type="hidden" value="{{ level.id }}">
 <button type="submit" id="submitBtn" style="border-style:none;color:#16e16e;padding: 0;border: none;font-size:2.3rem;margin-bottom:2rem;"  data-validate="my_form">{{ level.id }}</button></td></form>
 {% endfor %}
+<h1 style="font-size: 4rem;">Duel Levels</h1><a href="{% url 'add_duel_level' %}">
+    <button type="submit" style="height:35px;width:100px;color: lightblue;border-color:lightblue">Add</button></td>
+</a><br><br>
+{% for level in duel_levels %}
+    <form id="my_form" name="linkform" action="{% url 'duel_level' %}" method="POST">
+    {% csrf_token %}
+    <input name="level_id" type="hidden" value="{{ level.id }}">
+<button type="submit" id="submitBtn" style="border-style:none;color:#16e16e;padding: 0;border: none;font-size:2.3rem;margin-bottom:2rem;"  data-validate="my_form">{{ level.id }}</button></td></form>
+{% endfor %}
 {% endblock %}

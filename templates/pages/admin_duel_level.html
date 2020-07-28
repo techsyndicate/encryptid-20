@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block header %}
+<h3 style="color: #16e16e;">{{ level_id }}</h3>
+<hr><br>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="reqd-details">
+        <span>Question</span>
+        <p>{{ level.question |safe }}</p>
+        <span>Source Code Hint</span>
+        <p>{{ level.src_hint }}</p>
+        <span>Winning Points</span>
+        <p>{{ level.winning_points }}</p>
+        <span>Losing Points</span>
+        <p>{{ level.losing_points }}</p>
+        <span>Answer</span>
+        <p>{{ level.answer }}</p>
+    </div>
+    <form action="{% url 'delete_duel_level'%}" method="POST">
+        {% csrf_token %}
+        <input name="level_id" type="hidden" value="{{ level_id }}">
+        <td><button type="submit" style="height:35px;width:200px;color: crimson;border-color:crimson">Delete</button></td> 
+    </form><br><br>
+</div>
+<style>
+    span {
+        color: #16e16e;
+    }
+    p {
+        color: #fff;
+    }
+</style>
+{% endblock %}
