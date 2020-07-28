@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block header %}
+Playing against {{ opponent }}
+{% endblock %}
+{% block content %}
+<div class="level">
+    <div class="question">{{ question |safe }}</div>
+    <br />
+    <form method="POST" action="{% url 'play_duel' %}">
+      {% csrf_token %}
+      <input type="text" name="answer" placeholder="Your answer" required/><br /><br />
+      <button class="button-primary" type="submit">Submit</button>
+    </form><br/>
+    <div class="timer">
+      <p id="time-remaining"></p>
+    </div>
+</div>
+
+
+{{ hint |safe }}
+
+
+{% endblock %}
