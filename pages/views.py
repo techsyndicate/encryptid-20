@@ -11,6 +11,7 @@ from pages.models import Player
 from django.http import HttpResponseRedirect
 from ratelimit.decorators import ratelimit
 from django.http import HttpResponse
+from datetime import datetime
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -246,8 +247,17 @@ def user(request):
     if user['superuser']:
         if request.method == "POST":
             user_id = request.POST['user_id'] 
+            logs = db.collection(u'logs')
+            logs = logs.where(u'username', u'==', user_id).order_by(u'timestamp', direction=firestore.Query.DESCENDING).limit(50)
+            logs = logs.stream()
+            log_docs = list(log.to_dict() for log in logs)
+            y = "timestamp"
+            for x in log_docs:
+                new_timestamp = datetime.fromtimestamp(int(x.get(y)))
+                x.update({y: new_timestamp})
+
             user = db.collection(u'users').document(user_id).get().to_dict()
-            context = { 'user': user }
+            context = { 'user': user,'log_docs':log_docs}
             return render(request, 'pages/user.html', context)
 
     return redirect('dashboard')
@@ -488,8 +498,13 @@ def logs(request):
 
     if user['superuser']:
         logs = db.collection(u'logs')
-        logs = logs.order_by(u'timestamp', direction=firestore.Query.DESCENDING).stream()
+        logs = logs.order_by(u'timestamp', direction=firestore.Query.DESCENDING).limit(50).stream()
         log_docs = list(log.to_dict() for log in logs)
+        y = "timestamp"
+        for x in log_docs:
+            new_timestamp = datetime.fromtimestamp(int(x.get(y)))
+            x.update({y: new_timestamp})
+
         context = { 'log_docs': log_docs }
         return render(request, 'pages/logs.html', context)
 
