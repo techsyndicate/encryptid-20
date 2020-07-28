@@ -21,6 +21,8 @@ urlpatterns = [
     path('admin/logs',views.logs,name="logs"),
     path('why-am-i-banned', views.banned, name="banned"),
     path('admin/assign-duels', views.assign_duels, name="assign_duels"),
+    path('duel', views.play_duel, name="play_duel"),
+    path('wait-for-next-duel', views.waiting_page, name="waiting_page")
 ]
 
 '''
