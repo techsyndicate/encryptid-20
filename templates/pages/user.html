@@ -30,12 +30,36 @@
             <td><button type="submit" style="height:35px;width:200px;color: white;border-color:white">Unban</button></td> 
         </form>
     {% endif %}
-    <br>
     <form action="{% url 'delete_user'%}" method="POST">
         {% csrf_token %}
         <input name="user_id" type="hidden" value="{{ user.uid }}">
         <td><button type="submit" style="height:35px;width:200px;color: crimson;border-color:crimson">Delete</button></td> 
-    </form><br><br>
+    </form>
+</div>
+<div class="row">
+    <div class="reqd-details">
+        <h1>Logs</h1>
+        <table id="customers" class="u-full-width">
+            <thead>
+            <tr>
+              <th>Sr no.</th>
+              <th>Level</th>
+              <th>Timestamp</th>
+              <th>Content</th>
+            </tr>
+            </thead>
+            <tbody id="count">
+            {% for log in log_docs %}
+                <tr>
+                <td></td>
+                <td>{{ log.level }}</td>
+                <td>{{ log.timestamp }}</td>
+                <td>{{ log.content }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 <style>
     span {
