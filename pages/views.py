@@ -525,7 +525,7 @@ def assign_duels(request):
     duel_levels = db.collection(u'duel_levels').where(u'completed', u'==', False).stream()
     duel_levels_list = list(level.id for level in duel_levels)
 
-    # duplicate list elements to randomise level section for all the players
+    # duplicate list elements to randomize duel level for all the players
     for i in range(len(duel_levels_list)):
         duel_levels_list.append(duel_levels_list[i])
 
@@ -538,7 +538,9 @@ def assign_duels(request):
 
     # 30 minutes time slot for one duel
     duel_end_time = time.time() + 1800
-    for level in duel_levels:
+    duel_level_update = db.collection(u'duel_levels').where(u'completed', u'==', False).where(u'winner', u'==', '').stream()
+    for level in db.collection(u'duel_levels').where(u'completed', u'==', False).where(u'winner', u'==', '').stream():
+        level = db.collection(u'duel_levels').document(level.id)
         level.update({ u'end_time': duel_end_time })
 
     return redirect('admin_dashboard')
@@ -550,6 +552,18 @@ def play_duel(request):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
     user_points = user['user_points']
+
+    if user['banned']:
+        return redirect('banned')
+    elif not user['duels']:
+        return redirect('dashboard')
+
+    if len(user['current_duel_level']) == 0 or time.time() > duel_level['end_time']:
+        return redirect('waiting_page')
+
+    # if duel_level['winner']:
+    #     if username != duel_level['winner']:
+    #         messages.success(request, f"Hard luck, {opponent} has completed the level.")
 
     current_duel_level = user['current_duel_level']
     duel_level_doc = db.collection(u'duel_levels').document(current_duel_level)
@@ -586,6 +600,7 @@ def play_duel(request):
                 })
                 duel_level_doc.update({ u'completed': True })
                 messages.success(request, f"Correct answer, but {opponent} won this duel round.")
+                return redirect('waiting_page')
 
         else:
             logs = db.collection(u'logs')
@@ -597,28 +612,15 @@ def play_duel(request):
             })
             messages.error(request, "lmfao ye kya likh rha hai bhai hasi aa gayi thodi sorry.")
             return redirect('play_duel')
+    
+    context = {
+        'opponent': opponent,
+        'question': question,
+        'hint': src_hint,
+        'end_time': end_time
+    }
 
-    else:
-        if user['banned']:
-            return redirect('banned')
-        elif not user['duels']:
-            return redirect('dashboard')
-
-        if time.time() >= duel_level['end_time']:
-            return redirect('waiting_page')
-
-        if duel_level['winner']:
-            if username != duel_level['winner']:
-                messages.success(request, f"Hard luck, {opponent} has completed the level.")
-        
-        context = {
-            'opponent': opponent,
-            'question': question,
-            'hint': src_hint,
-            'end_time': end_time
-        }
-
-        return render(request, 'pages/duel_level.html', context)
+    return render(request, 'pages/duel_level.html', context)
 
 @login_required(login_url='login')
 def waiting_page(request):
@@ -673,15 +675,13 @@ def add_duel_level(request):
             level_id = request.POST['level_id']
             question = request.POST['question']
             src_hint = request.POST['src_hint']
-            winning_points = request.POST['winning_points']
-            losing_points = request.POST['losing_points']
             answer = request.POST['answer']
 
             db.collection(u'duel_levels').document(level_id).set({
                 u'question': question,
                 u'src_hint': src_hint,
-                u'winning_points': int(winning_points),
-                u'losing_points': int(losing_points),
+                u'winning_points': 150,
+                u'losing_points': 100,
                 u'answer': answer,
                 u'end_time': 0,
                 u'completed': False,

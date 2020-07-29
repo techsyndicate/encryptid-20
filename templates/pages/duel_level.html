@@ -12,7 +12,7 @@ Playing against {{ opponent }}
       <button class="button-primary" type="submit">Submit</button>
     </form><br/>
     <div class="timer">
-      <p id="time-remaining"></p>
+      <p id="timer"></p>
     </div>
 </div>
 
@@ -20,4 +20,21 @@ Playing against {{ opponent }}
 {{ hint |safe }}
 
 
+<script>
+  let countDownDate = parseInt("{{ end_time }}");
+  
+  let x = setInterval(function() {
+    let now = (new Date().getTime()) / 1000;
+    let distance = countDownDate - now;
+    let minutes = Math.floor((distance % (3600) / 60));
+    let seconds = Math.floor((distance % 60));
+    
+    document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s";
+
+    if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("timer").innerHTML = "0m 0s";
+    }
+  }, 1000);
+</script>
 {% endblock %}
