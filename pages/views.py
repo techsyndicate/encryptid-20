@@ -27,14 +27,42 @@ def index(request):
 #     if user['banned']:
 #         return redirect('banned')
     
-#     c1color,c2color,c3color = countries_color['US'],countries_color['CA'],countries_color['IN']
+#     c1color = countries_color['US']
+#     c2color = countries_color['CA']
+#     c3color = countries_color['RU']
+#     c4color = countries_color['AU']
+#     c5color = countries_color['TN']
+#     c6color = countries_color['GB']
+#     c7color = countries_color['CH']
+#     c8color = countries_color['SA']
+#     c9color = countries_color['BR']
+#     c10color = countries_color['CU']
+#     c11color = countries_color['FI']
+#     c12color = countries_color['GL']
+#     c13color = countries_color['LY']
+#     c14color = countries_color['NZ']
+#     c15color = countries_color['JO']
+
 #     context = {
-#         'c1color':c1color,
-#         'c2color':c2color,
-#         'c3color':c3color,
+#         'c1color': c1color,
+#         'c2color': c2color,
+#         'c3color': c3color,
+#         'c4color': c4color,
+#         'c5color': c5color,
+#         'c6color': c6color,
+#         'c7color': c7color,
+#         'c8color': c8color,
+#         'c9color': c9color,
+#         'c10color': c10color,
+#         'c11color': c11color,
+#         'c12color': c12color,
+#         'c13color': c13color,
+#         'c14color': c14color,
+#         'c15color': c15color,
 #         'username': username,
 #         'completed_levels': completed_levels,
 #     }
+
 #     return render(request, 'pages/dashboard.html', context)
 
 @login_required(login_url='login')

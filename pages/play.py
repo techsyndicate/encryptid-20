@@ -42,7 +42,7 @@ def submit(request, code):
 
         if answer == level['answer']:
             completed_levels.append(current_level)
-            new_countries_color[current_level] = 'green'
+            new_countries_color[current_level] = '#16e16e'
             
             if level_completed_by >= 20:
                 level_points = float('%.4f' %(level_points - level_points/total_players))
@@ -113,7 +113,7 @@ def skip_level(request, code):
     completed_levels.append(code)
 
     new_countries_color = user['countries_color']
-    new_countries_color[code] = 'green'
+    new_countries_color[code] = '#16e16e'
 
     if level_completed_by >= 20:
         level_points = float('%.4f' %(level_points - level_points/total_players))
