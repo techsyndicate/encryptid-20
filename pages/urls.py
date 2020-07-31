@@ -29,9 +29,6 @@ urlpatterns = [
     path('admin/levels/duel_level', admin.duel_level, name="duel_level"),
     path('admin/levels/add_duel_level', admin.add_duel_level, name="add_duel_level"),
     path('admin/levels/duel_level/delete' ,admin.delete_duel_level, name="delete_duel_level"),
-
-    path('secret', views.secret, name="secret"),
-    path('sevendeadlysins', views.sevendeadlysins, name="sevendeadlysins")
 ]
 
 # path('admin/assign-duels', admin.assign_duels, name="assign_duels"),

@@ -138,11 +138,3 @@ def waiting_page(request):
         return redirect('dashboard')
 
     return render(request, 'pages/waiting_page.html')
-
-@login_required(login_url='login')
-def secret(request):
-    return redirect('https://drive.google.com/file/d/1TpGJfLF9rt2vYRxnI_J5P_4yLGwZ2EiP/view?usp=sharing')
-
-@login_required(login_url='login')
-def sevendeadlysins(request):
-    return HttpResponse("lust lust envy 9 pride sloth gluttony 0 gluttony<br/>you might wanna reread the question somewhere else at this point<br/><!-- v and o having sex (5)-->")
