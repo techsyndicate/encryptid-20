@@ -4,7 +4,7 @@
 <div class="card">
 <div class="level">
   <h4>Level for {{ id }} | {{ points }} Points</h4>
-  <div class="question">{{ question |safe }}</div>
+  <div class="question" style="word-break: break-all;">{{ question |safe }}</div>
   <br />
   <form method="POST" action="{% url 'submit' id %}">
     {% csrf_token %}
