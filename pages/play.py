@@ -12,6 +12,7 @@ from django.http import HttpResponseRedirect
 from ratelimit.decorators import ratelimit
 from django.http import HttpResponse
 from datetime import datetime
+from django.templatetags.static import static
 
 @login_required(login_url='login')
 @ratelimit(key='ip', rate='30/m', method=['GET', 'POST'], block=True)
@@ -39,6 +40,10 @@ def submit(request, code):
         completed_levels = user['completed_levels']
         user_points = user['user_points']
         new_countries_color = user['countries_color']
+
+        if level_doc.id == 'US':
+            if answer == 'hallelujah':
+                return redirect('https://drive.google.com/file/d/1HyAvomr3V-LBjmRC_oxCYHe3thBFhQO9/view?usp=sharing')
 
         if answer == level['answer']:
             completed_levels.append(current_level)
@@ -92,7 +97,7 @@ def submit(request, code):
                 u'content': answer,
                 u'timestamp': time.time()
             })
-            messages.error(request, "lmfao ye kya likh rha hai bhai hasi aa gayi thodi sorry")
+            messages.error(request, "<i class='fa fa-times'></i>Incorrect answer.")
             return redirect('play', code=current_level)
 
 @login_required(login_url='login')
@@ -209,7 +214,7 @@ def play_duel(request):
                 u'content': answer,
                 u'timestamp': time.time()
             })
-            messages.error(request, "lmfao ye kya likh rha hai bhai hasi aa gayi thodi sorry.")
+            messages.error(request, "<i class='fa fa-times'></i>Incorrect answer.")
             return redirect('play_duel')
     
     context = {

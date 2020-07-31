@@ -36,7 +36,7 @@ def login(request):
     else:
         return render(request, 'pages/login.html')
 
-@ratelimit(key='ip', rate='2/d', method=['GET', 'POST'], block=True)
+@ratelimit(key='ip', rate='1/d', method=['GET', 'POST'], block=True)
 def register(request):
     if request.method == "POST":
         first_name = request.POST['first_name']
@@ -75,22 +75,22 @@ def register(request):
                 player.save()
 
                 countries_color = {
-                    'US':'red',
-                    'CA':'red',
-                    'RU': 'red',
-                    'GL': 'red',
-                    'BR': 'red',
-                    'SA': 'red',
-                    'TN': 'red',
-                    'BG': 'red',
-                    'NZ': 'red',
-                    'AU': 'red',
-                    'LY': 'red',
-                    'CU': 'red',
-                    'CH': 'red',
-                    'FI': 'red',
-                    'GB': 'red',
-                    'JO': 'red'
+                    'US':'#042D16',
+                    'CA':'#042D16',
+                    'RU': '#042D16',
+                    'GL': '#042D16',
+                    'BR': '#042D16',
+                    'SA': '#042D16',
+                    'TN': '#042D16',
+                    'BG': '#042D16',
+                    'NZ': '#042D16',
+                    'AU': '#042D16',
+                    'LY': '#042D16',
+                    'CU': '#042D16',
+                    'CH': '#042D16',
+                    'FI': '#042D16',
+                    'GB': '#042D16',
+                    'KW': '#042D16'
                     }
 
                 db.collection(u'users').document(username).set({

@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" media="all" href="{% static 'map/jquery-jvectormap-2.0.5.css' %}"/>
   <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://use.fontawesome.com/8baae39a51.js"></script>
 </head>
 <body>
   <div id="navbar" class="topnav">
@@ -29,7 +30,7 @@
   {% if messages %}
   {% for message in messages %}
   <div class="container">
-    <p>{{ message }}</p>
+    <p>{{ message |safe }}</p>
   </div>
   {% endfor %}
   {% endif %}
@@ -41,7 +42,6 @@
     <hr/>
     <p class="footer-text">Tech Syndicate</p>
   </footer>
-  <script src="{% static 'index.js' %}"></script>
   <script src='https://www.google.com/recaptcha/api.js'></script>
   <script>
      responsive = () => {

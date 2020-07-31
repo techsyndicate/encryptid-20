@@ -143,7 +143,8 @@ footer hr {
 .footer-text {
   color: #ddd;
   text-align: center;
-  padding: 12px 0 0;
+  padding: 12px;
+  margin: 0;
 }
 .prompt {
   padding: 16% 0;
@@ -214,8 +215,9 @@ footer hr {
 }
 
 #confirm-box {
-  display: none;
+  display: block;
   margin: auto;
+  z-index: 1;
   text-align: center;
   border: 1px solid #222;
   background-color: #222;
@@ -231,6 +233,7 @@ footer hr {
 
 .level {
   color: #fff;
+  z-index: -1;
 }
 
 @media only screen and (max-width: 600px) {

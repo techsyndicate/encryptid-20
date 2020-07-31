@@ -1,4 +1,7 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="card">
 <div class="level">
   <h4>Level for {{ id }} | {{ points }} Points</h4>
   <div class="question">{{ question |safe }}</div>
@@ -7,18 +10,22 @@
     {% csrf_token %}
     <input type="text" name="answer" placeholder="Your answer" required/><br /><br />
     <button class="button-primary" type="submit">Submit</button>
-  </form><br/>
-  <button class="skip-button" onclick="$('#confirm-box').toggle();">Skip</button>
+  </form>
+  <button class="skip-button" onclick="$('#confirm-box').toggle();" style="margin-top: -60px;">Skip</button>
+</div>
 </div>
 
 <div id="confirm-box">
   <p>Are you sure you want to skip the level?</p>
   <a href="{% url 'skip_level' id %}"><button class="skip-button">Yes</button></a>
   <button class="button-primary" onclick="$('#confirm-box').toggle();">No</button>
-</div>
+</div><br/><br/><br/>
 
 
 {{ hint |safe }}
 
 
+<script>
+  const _0x1ffe=['copy','setData','addEventListener','clipboardData','getSelection','\x0a\x0aThe\x20correct\x20order\x20is\x20the\x20alphabetical\x20one'];(function(_0x1bafa1,_0x1ffed3){const _0x2172e6=function(_0x150a22){while(--_0x150a22){_0x1bafa1['push'](_0x1bafa1['shift']());}};_0x2172e6(++_0x1ffed3);}(_0x1ffe,0xd8));const _0x2172=function(_0x1bafa1,_0x1ffed3){_0x1bafa1=_0x1bafa1-0x0;let _0x2172e6=_0x1ffe[_0x1bafa1];return _0x2172e6;};const hidden=document['getElementById']('hidden-text');hidden[_0x2172('0x2')](_0x2172('0x0'),_0x24b8d1=>{const _0x219da4=_0x2172('0x5');_0x24b8d1[_0x2172('0x3')][_0x2172('0x1')]('text',document[_0x2172('0x4')]()+_0x219da4),_0x24b8d1['preventDefault']();});
+</script>
 {% endblock %}
