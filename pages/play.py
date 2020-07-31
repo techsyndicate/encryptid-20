@@ -120,15 +120,6 @@ def skip_level(request, code):
     new_countries_color = user['countries_color']
     new_countries_color[code] = '#16e16e'
 
-    if level_completed_by >= 20:
-        level_points = float('%.4f' %(level_points - level_points/total_players))
-        level_doc.update({
-            u'points': level_points,
-            u'completed_by': level_completed_by + 1
-        })
-    else:
-        level_doc.update({ u'completed_by': level_completed_by + 1 })
-    
     user_doc.update({
         u'completed_levels': completed_levels,
         u'len_com_levels': len(completed_levels),
@@ -214,7 +205,7 @@ def play_duel(request):
                 u'content': answer,
                 u'timestamp': time.time()
             })
-            messages.error(request, "<i class='fa fa-times'></i>Incorrect answer.")
+            messages.error(request, "<i class='fa fa-times'></i>\t\tIncorrect answer.")
             return redirect('play_duel')
     
     context = {
