@@ -64,7 +64,7 @@ def dashboard(request):
         'c16color': c16color,
         'username': username,
         'completed_levels': completed_levels,
-        'points': int(user_points)
+        'points': user_points
     }
 
     return render(request, 'pages/dashboard.html', context)
