@@ -12,7 +12,7 @@ urlpatterns = [
     path('logout', auth.logout, name="logout"),
 
     path('play/<str:code>/submit', play.submit, name="submit"),
-    path('play/<str:code>/fuckgobuster', play.skip_level, name="skip_level"),
+    path('play/<str:code>/next', play.skip_level, name="skip_level"),
     path('play/<str:code>', views.play, name="play"),
 
     path('admin', admin.admin_dashboard, name="admin_dashboard"),
