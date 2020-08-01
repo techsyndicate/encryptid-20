@@ -86,6 +86,14 @@ def submit(request, code):
                 current_user.player.user_points += level_points
                 current_user.player.save(update_fields=["last_answer_time", "num_completed_levels", "user_points"])
 
+            logs = db.collection(u'logs')
+            logs.add({
+                u'username': username,
+                u'level': current_level,
+                u'content': answer,
+                u'timestamp': time.time()
+            })
+
             messages.success(request, "Correct answer, good work there.")
             return redirect('dashboard')
 
