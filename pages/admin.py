@@ -58,7 +58,7 @@ def user(request):
             pass
 
         logs = db.collection(u'logs')
-        logs = logs.where(u'username', u'==', user_id).order_by(u'timestamp', direction=firestore.Query.DESCENDING).limit(50)
+        logs = logs.where(u'username', u'==', user_id).order_by(u'timestamp', direction=firestore.Query.DESCENDING).limit(100)
         logs = logs.stream()
         log_docs = list(log.to_dict() for log in logs)
         y = "timestamp"
@@ -303,7 +303,7 @@ def logs(request):
         return redirect('dashboard')
 
     logs = db.collection(u'logs')
-    logs = logs.order_by(u'timestamp', direction=firestore.Query.DESCENDING).limit(50).stream()
+    logs = logs.order_by(u'timestamp', direction=firestore.Query.DESCENDING).limit(100).stream()
     log_docs = list(log.to_dict() for log in logs)
     y = "timestamp"
     for x in log_docs:
