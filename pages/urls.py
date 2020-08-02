@@ -8,7 +8,6 @@ urlpatterns = [
     path('why-am-i-banned', views.banned, name="banned"),
     
     path('login', auth.login, name="login"),
-    path('register', auth.register, name="register"),
     path('logout', auth.logout, name="logout"),
 
     path('play/<str:code>/submit', play.submit, name="submit"),
@@ -31,6 +30,7 @@ urlpatterns = [
     path('admin/levels/duel_level/delete' ,admin.delete_duel_level, name="delete_duel_level"),
 ]
 
+# path('register', auth.register, name="register"),
 # path('admin/assign-duels', admin.assign_duels, name="assign_duels"),
 # path('wait-for-next-duel', views.waiting_page, name="waiting_page"),
 # path('duel', play.play_duel, name="play_duel"),
