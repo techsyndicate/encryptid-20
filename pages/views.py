@@ -70,6 +70,7 @@ def dashboard(request):
     return render(request, 'pages/dashboard.html', context)
 
 @login_required(login_url='login')
+@ratelimit(key='ip', rate='1/s', method=['GET', 'POST'], block=True)
 def play(request, code):
     current_user = User.objects.get(id=request.user.id)
     username = current_user.username
