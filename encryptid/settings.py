@@ -29,7 +29,7 @@ SECRET_KEY = 'valctzc*t(qn_jklsmllb1o66cw-8&kxp^t$ozl$th+^+%x&9&'
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['localhost', 'encryptid.live', 'encryptid-20.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', 'encryptid.live']
 
 
 # Application definition

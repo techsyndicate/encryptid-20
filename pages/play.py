@@ -19,14 +19,10 @@ from django.templatetags.static import static
 def submit(request, code):
     current_user = User.objects.get(id=request.user.id)
     username = current_user.username
-    num_completed_levels = current_user.player.num_completed_levels
-    last_answer_time = current_user.player.last_answer_time
-    player_points = current_user.player.user_points
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
     total_players = User.objects.all().count()
-    print(total_players)
 
     if request.method == "POST":
         answer = request.POST['answer']
@@ -35,10 +31,8 @@ def submit(request, code):
         current_level = user['current_level']
         level_doc = db.collection(u'levels').document(current_level)
         level = level_doc.get().to_dict()
-        level_points = level['points']
         level_completed_by = level['completed_by']
         completed_levels = user['completed_levels']
-        user_points = user['user_points']
         new_countries_color = user['countries_color']
 
         if level_doc.id == 'US':
@@ -49,42 +43,19 @@ def submit(request, code):
             completed_levels.append(current_level)
             new_countries_color[current_level] = '#16e16e'
             
-            if level_completed_by >= 20:
-                level_points = float('%.4f' %(level_points - level_points/total_players))
-                level_doc.update({
-                    u'points': level_points,
-                    u'completed_by': level_completed_by + 1
-                }) 
-            
-                user_doc.update({
-                    u'current_level': '',
-                    u'last_answer_time': time.time(),
-                    u'completed_levels': completed_levels,
-                    u'len_comp_levels': len(completed_levels),
-                    u'user_points': user_points + level_points,
-                    u'countries_color': new_countries_color,
-                })
+            level_doc.update({ u'completed_by': level_completed_by + 1 })
 
-                current_user.player.last_answer_time = time.time()
-                current_user.player.num_completed_levels = len(completed_levels)
-                current_user.player.user_points += level_points
-                current_user.player.save(update_fields=["last_answer_time", "num_completed_levels", "user_points"])
+            user_doc.update({
+                u'current_level': '',
+                u'last_answer_time': time.time(),
+                u'completed_levels': completed_levels,
+                u'len_comp_levels': len(completed_levels),
+                u'countries_color': new_countries_color,
+            })
 
-            else:
-                level_doc.update({ u'completed_by': level_completed_by + 1 })
-                user_doc.update({
-                    u'current_level': '',
-                    u'last_answer_time': time.time(),
-                    u'completed_levels': completed_levels,
-                    u'len_comp_levels': len(completed_levels),
-                    u'user_points': user_points + level_points,
-                    u'countries_color': new_countries_color,
-                })
-
-                current_user.player.last_answer_time = time.time()
-                current_user.player.num_completed_levels = len(completed_levels)
-                current_user.player.user_points += level_points
-                current_user.player.save(update_fields=["last_answer_time", "num_completed_levels", "user_points"])
+            current_user.player.last_answer_time = time.time()
+            current_user.player.num_completed_levels = len(completed_levels)
+            current_user.player.save(update_fields=["last_answer_time", "num_completed_levels"])
 
             logs = db.collection(u'logs')
             logs.add({
@@ -105,7 +76,7 @@ def submit(request, code):
                 u'content': answer,
                 u'timestamp': time.time()
             })
-            messages.error(request, "<i class='fa fa-times'></i>Incorrect answer.")
+            messages.error(request, "<i class='fa fa-times'></i>\t\tIncorrect answer.")
             return redirect('play', code=current_level)
 
 @login_required(login_url='login')
@@ -115,7 +86,7 @@ def skip_level(request, code):
     username = current_user.username
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
-    
+
     total_players = User.objects.all().count()
 
     level_doc = db.collection(u'levels').document(code)
