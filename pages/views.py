@@ -14,7 +14,7 @@ from django.http import HttpResponse
 from datetime import datetime
 
 def index(request):
-    return redirect('login')
+    return render(request, 'pages/index.html')
 
 @login_required(login_url='login')
 def dashboard(request):
