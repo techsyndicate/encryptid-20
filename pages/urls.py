@@ -10,10 +10,6 @@ urlpatterns = [
     path('login', auth.login, name="login"),
     path('logout', auth.logout, name="logout"),
 
-    path('play/<str:code>/submit', play.submit, name="submit"),
-    path('play/<str:code>/next', play.skip_level, name="skip_level"),
-    path('play/<str:code>', views.play, name="play"),
-
     path('admin', admin.admin_dashboard, name="admin_dashboard"),
     path('admin/logs', admin.logs, name="logs"),
     path('admin/users', admin.users, name="users"),
@@ -34,3 +30,8 @@ urlpatterns = [
 # path('admin/assign-duels', admin.assign_duels, name="assign_duels"),
 # path('wait-for-next-duel', views.waiting_page, name="waiting_page"),
 # path('duel', play.play_duel, name="play_duel"),
+
+
+# path('play/<str:code>/submit', play.submit, name="submit"),
+# path('play/<str:code>/next', play.skip_level, name="skip_level"),
+# path('play/<str:code>', views.play, name="play"),

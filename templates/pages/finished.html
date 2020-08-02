@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block header %}Hey <span style="color: #16e16e;">{{ username }}</span>!{% endblock %}
+{% block content %}
+<p>
+Encryptid 2020 has ended! Thanks for participating.<br/>
+You can check out the leaderboard <a href="{% url 'leaderboard' %}">here</a>.</p>
+{% endblock %}

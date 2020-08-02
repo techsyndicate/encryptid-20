@@ -129,7 +129,11 @@ def play_duel(request):
 
     if user['banned']:
         return redirect('banned')
-    elif not user['duels']:
+
+    if 'duels' not in user.keys():
+        return redirect('dashboard')
+
+    if not user['duels']:
         return redirect('dashboard')
 
     if len(user['current_duel_level']) == 0 or time.time() > duel_level['end_time']:
