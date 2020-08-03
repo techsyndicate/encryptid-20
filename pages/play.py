@@ -14,6 +14,14 @@ from django.http import HttpResponse
 from datetime import datetime
 from django.templatetags.static import static
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
 @login_required(login_url='login')
 @ratelimit(key='ip', rate='30/m', method=['GET', 'POST'], block=True)
 def submit(request, code):
@@ -153,6 +161,7 @@ def play_duel(request):
     src_hint = duel_level['src_hint']
     end_time = duel_level['end_time']
     opponent = [player for player in current_players if player != username][0]
+    user_ip = get_client_ip(request)
 
     if time.time() > duel_level['end_time']:
         return redirect('waiting_page')
@@ -169,6 +178,14 @@ def play_duel(request):
                     u'last_answer_time': time.time(),
                     u'current_duel_level': ''
                 })
+                logs = db.collection(u'logs')
+                logs.add({
+                    u'username': username,
+                    u'level': current_duel_level,
+                    u'content': answer,
+                    u'timestamp': time.time(),
+                    u'ip': user_ip
+                })
                 messages.success(request, f"Congratulations! You've won this duel round against {opponent}.")
                 return redirect('waiting_page')
 
@@ -180,6 +197,14 @@ def play_duel(request):
                     u'current_duel_level': ''
                 })
                 duel_level_doc.update({ u'completed': True })
+                logs = db.collection(u'logs')
+                logs.add({
+                    u'username': username,
+                    u'level': current_duel_level,
+                    u'content': answer,
+                    u'timestamp': time.time(),
+                    u'ip': user_ip
+                })
                 messages.success(request, f"Correct answer, but {opponent} won this duel round.")
                 return redirect('waiting_page')
 
@@ -189,7 +214,8 @@ def play_duel(request):
                 u'username': username,
                 u'level': current_duel_level,
                 u'content': answer,
-                u'timestamp': time.time()
+                u'timestamp': time.time(),
+                u'ip': user_ip
             })
             messages.error(request, "<i class='fa fa-times'></i>\t\tIncorrect answer.")
             return redirect('play_duel')
