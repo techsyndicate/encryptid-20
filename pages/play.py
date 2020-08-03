@@ -136,6 +136,9 @@ def play_duel(request):
     if not user['duels']:
         return redirect('dashboard')
 
+    if not user['current_duel_level']:
+        return redirect('waiting_page')
+
     # if duel_level['winner']:
     #     if username != duel_level['winner']:
     #         messages.success(request, f"Hard luck, {opponent} has completed the level.")
@@ -151,7 +154,7 @@ def play_duel(request):
     end_time = duel_level['end_time']
     opponent = [player for player in current_players if player != username][0]
 
-    if len(user['current_duel_level']) == 0 or time.time() > duel_level['end_time']:
+    if time.time() > duel_level['end_time']:
         return redirect('waiting_page')
 
     if request.method == 'POST':
