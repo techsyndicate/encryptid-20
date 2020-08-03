@@ -11,6 +11,7 @@
     <th>Level</th>
     <th>Timestamp</th>
     <th>Content</th>
+    <th>IP</th>
   </tr>
   </thead>
   <tbody id="count">
@@ -21,6 +22,7 @@
       <td>{{ log.level }}</td>
       <td>{{ log.timestamp }}</td>
       <td style="word-break: break-all;">{{ log.content }}</td>
+      <td>{{ log.ip }}</td>
       </tr>
   {% endfor %}
   </tbody>
