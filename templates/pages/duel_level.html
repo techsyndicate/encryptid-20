@@ -11,13 +11,15 @@ Playing against {{ opponent }}
       <input type="text" name="answer" placeholder="Your answer" required/><br /><br />
       <button class="button-primary" type="submit">Submit</button>
     </form><br/>
+    <center>
     <div class="timer">
-      <p id="timer"></p>
+      <h4 id="timer" style="color: #16e16e;"></h4>
     </div>
+    </center>
 </div>
 
 
-{{ hint |safe }}
+<p hidden>{{ hint }}</p>
 
 
 <script>
