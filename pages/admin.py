@@ -233,7 +233,6 @@ def assign_duels(request):
         level_for_user = random.choice(duel_levels_list)
         duel_levels_list.remove(level_for_user)
         user.update({ u'current_duel_level': level_for_user })
-        db.collection(u'duel_levels').document(level_for_user).update({ u'players': firestore.ArrayUnion([user.id]) })
 
     # 30 minutes time slot for one duel
     duel_end_time = time.time() + 1800
