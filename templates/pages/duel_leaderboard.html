@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block header %}Finals Leaderboard{% endblock %}
+{% block content %}
+<table id="customers" class="u-full-width">
+  <thead>
+  <tr>
+    <th>Rank</th>
+    <th>Username</th>
+    <th>Points</th>
+  </tr>
+  </thead>
+  <tbody id="count">
+  {% for user in user_docs %}
+    <tr>
+      <td></td>
+      <td>{{ user.uid }}</td>
+      <td>{{ user.user_points }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

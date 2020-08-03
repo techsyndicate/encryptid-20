@@ -135,6 +135,9 @@ def waiting_page(request):
     user_doc = db.collection(u'users').document(username)
     user = user_doc.get().to_dict()
 
+    if 'duels' not in user.keys():
+        return redirect('dashboard')
+
     if not user['duels']:
         return redirect('dashboard')
 
@@ -158,3 +161,13 @@ def dashboard(request):
     context = {'username':username}
 
     return render(request, 'pages/finished.html', context)
+
+def duel_leaderboard(request):
+    users = db.collection(u'users')
+    users = users.where(u'duels', u'==', True).order_by(u'user_points', direction=firestore.Query.DESCENDING).order_by(u'last_answer_time', direction=firestore.Query.ASCENDING).stream()
+    user_docs = list(log.to_dict() for log in users)
+    context = {
+        'user_docs':user_docs
+    }
+    return render(request, 'pages/duel_leaderboard.html', context)
+        

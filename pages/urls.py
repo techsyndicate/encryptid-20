@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.index, name="index"),
     path('dashboard', views.dashboard, name="dashboard"),
     path('leaderboard', views.leaderboard, name="leaderboard"),
+    path('duel_leaderboard', views.duel_leaderboard, name="duel_leaderboard"),
     path('why-am-i-banned', views.banned, name="banned"),
     
     path('login', auth.login, name="login"),
