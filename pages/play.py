@@ -147,10 +147,6 @@ def play_duel(request):
     if not user['current_duel_level']:
         return redirect('waiting_page')
 
-    # if duel_level['winner']:
-    #     if username != duel_level['winner']:
-    #         messages.success(request, f"Hard luck, {opponent} has completed the level.")
-
     current_duel_level = user['current_duel_level']
     duel_level_doc = db.collection(u'duel_levels').document(current_duel_level)
     duel_level = duel_level_doc.get().to_dict()

@@ -152,12 +152,6 @@ def dashboard(request):
     if user['banned']:
         return redirect('banned')
 
-    if 'duels' in user.keys():
-       if user['duels']:
-            context = {'username':username}
-            return render(request, 'pages/finalist_finished.html', context)
-
-
     context = {'username':username}
 
     return render(request, 'pages/finished.html', context)
